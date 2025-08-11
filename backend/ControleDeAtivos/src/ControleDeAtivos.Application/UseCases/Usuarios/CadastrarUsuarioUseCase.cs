@@ -1,0 +1,43 @@
+﻿using ControleDeAtivos.Application.Interfaces.Usuarios;
+using ControleDeAtivos.Application.Requests.Usuario;
+using ControleDeAtivos.Application.Responses.Usuario;
+using ControleDeAtivos.Domain.Entities;
+using ControleDeAtivos.Domain.Enums;
+using ControleDeAtivos.Domain.Repositories;
+
+namespace ControleDeAtivos.Application.services.Usuarios
+{
+    public class CadastrarUsuarioservice : ICadastrarUsuarioService
+    {
+        private readonly IUsuarioRepository _repo;
+
+        public CadastrarUsuarioservice(IUsuarioRepository repo) => _repo = repo;
+
+        public async Task<ResponseCadastrarUsuarioJson> ExecuteAsync(RequestCadastrarUsuarioJson dto)
+        {
+            var usuario = new Usuario(
+                dto.Login,
+                dto.Nome,
+                dto.Email,
+                dto.Status,
+                dto.Perfil
+            );
+
+            usuario.DefinirSenha(dto.Senha);
+
+            await _repo.AdicionarAsync(usuario);
+            await _repo.SalvarAsync();
+
+            return new ResponseCadastrarUsuarioJson
+            {
+                Id = usuario.Id,
+                Login = usuario.Login,
+                Nome = usuario.Nome,
+                Email = usuario.Email,
+                Perfil = usuario.Perfil,
+                Status = usuario.Status,
+                DataCadastro = usuario.DataCadastro
+            };
+        }
+    }
+}
