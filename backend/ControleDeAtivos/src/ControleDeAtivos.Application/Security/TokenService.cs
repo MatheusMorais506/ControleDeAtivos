@@ -32,7 +32,13 @@ namespace ControleDeAtivos.Infraestructure.Security
             {
                 new Claim(JwtRegisteredClaimNames.Sub, usuario.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, usuario.Email),
-                new Claim("nome", usuario.Nome),
+                new Claim("Login", usuario.Login),
+                new Claim("Nome", usuario.Nome),
+                new Claim("PerfilId", usuario.PerfilId.ToString()),
+                new Claim("Perfil", usuario.Perfil.Descricao),
+                new Claim("StatusId", usuario.StatusId.ToString()),
+                new Claim("Status", usuario.Status.Descricao),
+                new Claim("DataCadastro", usuario.DataCadastro.ToString())
             };
 
             var token = new JwtSecurityToken(
