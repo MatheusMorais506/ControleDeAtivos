@@ -9,9 +9,9 @@ namespace ControleDeAtivos.Application.Responses.Login
 {
     public class ResponseLoginJson
     {
-        public string Token { get; init; }
+        public string Token { get; init; } = string.Empty;
         public DateTime ExpiraEm { get; init; }
-        public ResponseConsultarUsuarioJson Usuario { get; init; }
-        public string RefreshToken { get; init; }
+        public ResponseConsultarUsuarioJson? Usuario { get; init; }
+        public string RefreshToken { get; init; } = string.Empty;
     }
 }

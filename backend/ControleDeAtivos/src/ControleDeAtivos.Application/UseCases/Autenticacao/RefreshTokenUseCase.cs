@@ -20,19 +20,19 @@ namespace ControleDeAtivos.Application.services.Autenticacao
             _tokenService = tokenService;
         }
 
-        public async Task<ResponseLoginJson> ExecuteAsync(RequestRefreshTokenJson request)
+        public async Task<(string AccessToken, DateTime ExpiraEm, string RefreshToken)> ExecuteAsync(string refreshToken)
         {
-            var refreshToken = await _autenticacaoRepo.ObterRefreshTokenAsync(request.RefreshToken)
+            var tokenExistente = await _autenticacaoRepo.ObterRefreshTokenAsync(refreshToken)
                 ?? throw new UnauthorizedAccessException("Refresh token inválido");
 
-            if (!refreshToken.EstaValido())
+            if (!tokenExistente.EstaValido())
                 throw new UnauthorizedAccessException("Refresh token expirado ou revogado");
 
-            var usuario = await _autenticacaoRepo.ObterUsuarioPorIdAsync(refreshToken.UsuarioId)
+            var usuario = await _autenticacaoRepo.ObterUsuarioPorIdAsync(tokenExistente.UsuarioId)
                 ?? throw new UnauthorizedAccessException("Usuário não encontrado");
 
-            refreshToken.Revogar();
-            await _autenticacaoRepo.AtualizarRefreshTokenAsync(refreshToken);
+            tokenExistente.Revogar();
+            await _autenticacaoRepo.AtualizarRefreshTokenAsync(tokenExistente);
 
             var novoAccessToken = _tokenService.GenerateToken(usuario);
             var novoRefreshToken = RefreshToken.Gerar(usuario.Id);
@@ -40,18 +40,7 @@ namespace ControleDeAtivos.Application.services.Autenticacao
             await _autenticacaoRepo.AdicionarRefreshTokenAsync(novoRefreshToken);
             await _autenticacaoRepo.SalvarAlteracoesAsync();
 
-            return new ResponseLoginJson
-            {
-                Token = novoAccessToken.Token,
-                ExpiraEm = novoAccessToken.ExpiraEm,
-                Usuario = new ResponseConsultarUsuarioJson
-                {
-                    Id = usuario.Id,
-                    Nome = usuario.Nome,
-                    Email = usuario.Email
-                },
-                RefreshToken = novoRefreshToken.Token
-            };
+            return (novoAccessToken.Token, novoAccessToken.ExpiraEm, novoRefreshToken.Token);
         }
     }
 }
