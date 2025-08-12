@@ -23,6 +23,17 @@ namespace ControleDeAtivos.Api.Controllers
             return CreatedAtAction(nameof(Cadastrar), new { id = result.Id }, result);
         }
 
+        [HttpPut("{id}/atualizar")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> Atualizar(
+            int id,
+            [FromServices] IAtualizarEquipamentoService service,
+            [FromBody] RequestCadastrarEquipamentoJson request)
+        {
+            await service.AtualizarAsync(id, request);
+            return NoContent();
+        }
+
         [HttpGet]
         [ProducesResponseType(typeof(List<ResponseEquipamentoJson>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Listar(

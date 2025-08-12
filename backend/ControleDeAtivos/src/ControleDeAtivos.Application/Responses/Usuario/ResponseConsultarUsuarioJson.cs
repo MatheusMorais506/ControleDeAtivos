@@ -14,8 +14,10 @@ namespace ControleDeAtivos.Application.Responses.Usuario
         public string Login { get; set; } = string.Empty;
         public string Nome { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
-        public Status? Status { get; set; }
-        public Perfil? Perfil { get; set; }
-        public DateTime DataCadastro { get; set; } = DateTime.UtcNow;
+        public string PerfilId { get; set; } = string.Empty;
+        public string Perfil { get; set; } = string.Empty;
+        public string StatusId { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+        public string DataCadastro { get; set; } = string.Empty;
     }
 }
