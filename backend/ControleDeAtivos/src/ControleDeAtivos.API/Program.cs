@@ -35,6 +35,7 @@ builder.Services.AddScoped<IListarEquipamentoService, ListarEquipamentoservice>(
 builder.Services.AddScoped<IEmprestarEquipamentoService, EmprestarEquipamentoservice>();
 builder.Services.AddScoped<IDevolverEquipamentoService, DevolverEquipamentoservice>();
 builder.Services.AddScoped<IRemoverEquipamentoService, RemoverEquipamentoservice>();
+builder.Services.AddScoped<IAtualizarEquipamentoService, AtualizarEquipamentoservice>();
 
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<ICadastrarUsuarioService, CadastrarUsuarioservice>();
@@ -121,6 +122,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                if (context.Request.Cookies.ContainsKey("access_token"))
+                {
+                    context.Token = context.Request.Cookies["access_token"];
+                }
+                return Task.CompletedTask;
+            }
         };
     });
 
