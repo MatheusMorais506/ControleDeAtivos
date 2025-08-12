@@ -35,5 +35,18 @@ namespace ControleDeAtivos.Domain.Entities
             Status = false;
             NotaEmprestimo = null;
         }
+
+        public void AtualizarDados(string nome, string codigoIdentificacao)
+        {
+            if (string.IsNullOrWhiteSpace(nome))
+                throw new DomainException("O nome não pode ser vazio.");
+
+            if (string.IsNullOrWhiteSpace(codigoIdentificacao))
+                throw new DomainException("O código de identificação não pode ser vazio.");
+
+            Nome = nome;
+            CodigoIdentificacao = codigoIdentificacao;
+        }
+
     }
 }
