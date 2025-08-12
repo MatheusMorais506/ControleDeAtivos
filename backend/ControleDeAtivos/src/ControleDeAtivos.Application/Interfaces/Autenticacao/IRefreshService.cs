@@ -10,6 +10,6 @@ namespace ControleDeAtivos.Application.Interfaces.Autenticacao
 {
     public interface IRefreshService
     {
-        Task<ResponseLoginJson> ExecuteAsync(RequestRefreshTokenJson request);
+        Task<(string AccessToken, DateTime ExpiraEm, string RefreshToken)> ExecuteAsync(string refreshToken);
     }
 }
