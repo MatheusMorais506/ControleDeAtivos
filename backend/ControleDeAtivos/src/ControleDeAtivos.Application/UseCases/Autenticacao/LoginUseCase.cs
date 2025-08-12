@@ -46,7 +46,14 @@ namespace ControleDeAtivos.Application.services.Autenticacao
                 {
                     Id = usuario.Id,
                     Nome = usuario.Nome,
-                    Email = usuario.Email
+                    Email = usuario.Email,
+                    Login = usuario.Login,
+                    Perfil = usuario.Perfil.Descricao,
+                    Status = usuario.Status.Descricao,
+                    PerfilId = usuario.Perfil.Id.ToString(),
+                    StatusId = usuario.Status.Id.ToString(),
+                    DataCadastro = usuario.DataCadastro.ToString()
+
                 },
                 RefreshToken = refreshToken.Token
             };

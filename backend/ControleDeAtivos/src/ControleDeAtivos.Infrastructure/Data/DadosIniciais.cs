@@ -35,7 +35,7 @@ namespace ControleDeAtivos.Infrastructure.Data
                     Login = "admin",
                     Nome = "Administrador",
                     Email = "admin@exemplo.com",
-                    Senha = "$2a$11$f8gbWUNwZ6XIOi4uz5BjV.BSLe5i8FYL/klMdGrSQTb62tVmabWUG", //admin10
+                    Senha = "$2a$11$83NY37GQsJb11/GJ7P0sVODJ0IkVZCULc0pLvIspqOHt.8dst.NQq", //admin10
                     DataCadastro = new DateTime(2025, 8, 12, 0, 0, 0, DateTimeKind.Utc),
                     StatusId = statusAtivoId,
                     PerfilId = perfilAdministradorId
