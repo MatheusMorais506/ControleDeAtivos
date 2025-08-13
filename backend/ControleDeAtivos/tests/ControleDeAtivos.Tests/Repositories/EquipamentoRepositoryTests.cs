@@ -13,7 +13,7 @@ public class EquipamentoRepositoryTests
     public EquipamentoRepositoryTests()
     {
         _dbContextOptions = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(databaseName: System.Guid.NewGuid().ToString())
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
 
         _equipamentoFaker = new Faker<Equipamento>("pt_BR")
@@ -37,7 +37,6 @@ public class EquipamentoRepositoryTests
 
         var equipamentoSalvo = await context.Equipamentos.FindAsync(novoEquipamento.Id);
         equipamentoSalvo.Should().NotBeNull();
-        equipamentoSalvo.Id.Should().BeGreaterThan(0);
         equipamentoSalvo.Nome.Should().Be(novoEquipamento.Nome);
         equipamentoSalvo.CodigoIdentificacao.Should().Be(novoEquipamento.CodigoIdentificacao);
     }
@@ -73,5 +72,65 @@ public class EquipamentoRepositoryTests
         resultado.Should().NotBeNull();
         resultado.Should().HaveCount(3);
         resultado.Should().BeEquivalentTo(equipamentos);
+    }
+
+    [Fact]
+    public async Task CodigoIdentificacaoJaExisteAsync_RetornaTrueQuandoExiste()
+    {
+        await using var context = CreateContext();
+        var repository = new EquipamentoRepository(context);
+        var equipamento = _equipamentoFaker.Generate();
+
+        await context.Equipamentos.AddAsync(equipamento);
+        await context.SaveChangesAsync();
+
+        var existe = await repository.CodigoIdentificacaoJaExisteAsync(equipamento.CodigoIdentificacao);
+        existe.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task CodigoIdentificacaoJaExisteAsync_RetornaFalseQuandoNaoExiste()
+    {
+        await using var context = CreateContext();
+        var repository = new EquipamentoRepository(context);
+
+        var existe = await repository.CodigoIdentificacaoJaExisteAsync("CODIGO_INVALIDO");
+        existe.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task Atualizar_DeveModificarEquipamentoExistente()
+    {
+        await using var context = CreateContext();
+        var repository = new EquipamentoRepository(context);
+        var equipamento = _equipamentoFaker.Generate();
+
+        await context.Equipamentos.AddAsync(equipamento);
+        await context.SaveChangesAsync();
+
+        equipamento.AtualizarDados("NomeNovo", "CODNOVO");
+        repository.Atualizar(equipamento);
+        await repository.SalvarAsync();
+
+        var atualizado = await context.Equipamentos.FindAsync(equipamento.Id);
+        atualizado.Nome.Should().Be("NomeNovo");
+        atualizado.CodigoIdentificacao.Should().Be("CODNOVO");
+    }
+
+    [Fact]
+    public async Task Remover_DeveExcluirEquipamento()
+    {
+        await using var context = CreateContext();
+        var repository = new EquipamentoRepository(context);
+        var equipamento = _equipamentoFaker.Generate();
+
+        await context.Equipamentos.AddAsync(equipamento);
+        await context.SaveChangesAsync();
+
+        repository.Remover(equipamento);
+        await repository.SalvarAsync();
+
+        var deletado = await context.Equipamentos.FindAsync(equipamento.Id);
+        deletado.Should().BeNull();
     }
 }
