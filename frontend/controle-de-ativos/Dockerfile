@@ -8,10 +8,14 @@ ENV NODE_TLS_REJECT_UNAUTHORIZED=0
 ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 
+RUN npm config set strict-ssl false
+RUN npm config set registry http://registry.npmjs.org/
+
 COPY package*.json ./
 RUN npm install --legacy-peer-deps
 
 COPY . .
+RUN npx next build
 
 RUN rm -rf /root/.cache/next-swc
 
