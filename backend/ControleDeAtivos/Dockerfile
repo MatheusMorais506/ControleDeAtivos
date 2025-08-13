@@ -5,6 +5,7 @@ WORKDIR /src
 # Copia a solução e os projetos
 COPY ControleDeAtivos.sln ./
 COPY src ./src
+COPY tests ./tests
 
 # Restaura dependências
 RUN dotnet restore ControleDeAtivos.sln
