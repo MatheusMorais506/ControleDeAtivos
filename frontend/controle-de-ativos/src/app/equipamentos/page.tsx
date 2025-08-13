@@ -6,6 +6,7 @@ import { consultarEquipamento } from '@/services/equipamentosService';
 import EquipamentosClient from './EquipamentosClient';
 import { AuthGuard } from '@/services/authGuard';
 import { Equipamento } from '@/types/Equipamento';
+import { showError, showSuccess } from '@/lib/toastLib';
 
 export default function EquipamentosPage() {
   const [equipamentos, setEquipamentos] = useState<Equipamento[]>([]);
@@ -16,6 +17,7 @@ export default function EquipamentosPage() {
         const data = await consultarEquipamento();
         setEquipamentos(data);
       } catch (err) {
+        showError((err as Error).message || 'Erro ao consultar equipamentos');
       }
     };
     fetchEquipamentos();

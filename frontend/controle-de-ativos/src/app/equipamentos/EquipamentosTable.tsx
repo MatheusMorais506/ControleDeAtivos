@@ -10,6 +10,7 @@ import { EquipamentoStatus } from '@/types/EquipamentoStatus';
 import { DataTable } from '@/components/common/DataTable';
 import { Column } from '@/types/Column';
 import Swal from 'sweetalert2';
+import { showError, showSuccess } from '@/lib/toastLib';
 
 export const EquipamentosTable: React.FC = () => {
   const { equipamentos } = useEquipamentosContext();
@@ -31,9 +32,29 @@ export const EquipamentosTable: React.FC = () => {
   const [formNome, setFormNome] = useState('');
   const [formCodigo, setFormCodigo] = useState('');
   const [observacaoEmprestimo, setObservacaoEmprestimo] = useState('');
-  const [dropdownAbertoId, setDropdownAbertoId] = useState<string | null>(null);
+  const [dropdownAbertoId, setDropdownAbertoId] = useState<number | null>(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
 
   useEffect(() => { fetchEquipamentos(); }, [fetchEquipamentos]);
+
+    useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest(".dropdown-menu") && !target.closest(".dropdown-button")) {
+        setDropdownAbertoId(null);
+      }
+    };
+  
+    if (dropdownAbertoId !== null) {
+      document.addEventListener("click", handleClickOutside);
+    } else {
+      document.removeEventListener("click", handleClickOutside);
+    }
+  
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [dropdownAbertoId]);
 
   const openAddModal = () => {
     setEditingEquipamento(null);
@@ -50,13 +71,16 @@ export const EquipamentosTable: React.FC = () => {
     try {
       if (editingEquipamento) {
         await updateEquipamento(editingEquipamento.id, formNome, formCodigo);
+        showSuccess('Equipamento atualizado com sucesso!');
       } else {
         await addEquipamento(formNome, formCodigo);
+         showSuccess('Equipamento adicionado com sucesso!');
       }
       await fetchEquipamentos();
       closeModal();
     } catch (err) {
       setActionError((err as Error).message || 'Erro desconhecido');
+      showError("Processo não realizado!");
     }
   };
 
@@ -66,19 +90,19 @@ export const EquipamentosTable: React.FC = () => {
       text: 'Você não poderá reverter esta ação!',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Sim, deletar!',
-      cancelButtonText: 'Cancelar'
+      confirmButtonColor: '#0F766EFF',
+      cancelButtonColor: '#DC2626FF',
+      confirmButtonText: 'Sim',
+      cancelButtonText: 'Não'
     });
 
     if (result.isConfirmed) {
       try {
         await removeEquipamento(id);
         await fetchEquipamentos();
-        Swal.fire('Deletado!', 'O equipamento foi removido.', 'success');
+        showSuccess('Equipamento removido com sucesso!');
       } catch (err) {
-        Swal.fire('Erro!', (err as Error).message || 'Erro ao remover equipamento', 'error');
+        showError((err as Error).message || 'Erro ao remover equipamento');
       }
     }
   };
@@ -91,17 +115,47 @@ export const EquipamentosTable: React.FC = () => {
       setEquipamentoSelecionado(null);
       setObservacaoEmprestimo('');
       setIsModalOpenEmprestimo(false);
+      showSuccess('Equipamento emprestado com sucesso!');
     } catch (err) {
-      alert((err as Error).message);
+      showError((err as Error).message || 'Erro ao emprestar equipamento');
     }
   };
 
   const devolverEquipamento = async (equip: Equipamento) => {
+
+    const result = await Swal.fire({
+      title: 'Confirmar a devolução?',
+      text: '',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#0F766EFF',
+      cancelButtonColor: '#DC2626FF',
+      confirmButtonText: 'Sim',
+      cancelButtonText: 'Não'
+    });
+
+   if (result.isConfirmed) {
     try {
       await devolver(equip.id);
       await fetchEquipamentos();
+      showSuccess('Equipamento devolvido com sucesso!');
     } catch (err) {
-      alert((err as Error).message);
+      showError((err as Error).message || 'Erro ao devolver equipamento');
+    }
+    }
+  };
+
+  const handleToggleDropdown = (e: React.MouseEvent, id: number) => {
+    e.stopPropagation();
+    if (dropdownAbertoId === id) {
+      setDropdownAbertoId(null);
+    } else {
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + window.scrollY,
+        left: rect.left + window.scrollX
+      });
+      setDropdownAbertoId(id);
     }
   };
 
@@ -120,12 +174,12 @@ export const EquipamentosTable: React.FC = () => {
       render: (item) => (
         <div className="relative inline-block text-left">
           <button
-            onClick={() => setDropdownAbertoId(prev => (prev === item.id ? null : item.id))}
+            onClick={(e) => handleToggleDropdown(e, parseInt(item.id))}
             className="inline-flex items-center gap-1 bg-teal-200 text-teal-800 text-sm font-semibold px-3 py-1 rounded cursor-pointer hover:bg-teal-300 focus:outline-none focus:ring-2 focus:ring-teal-400"
           >
             Ações
             <svg
-              className={`w-4 h-4 transition-transform duration-200 ${dropdownAbertoId === item.id ? 'rotate-180' : ''}`}
+              className={`w-4 h-4 transition-transform duration-200 ${dropdownAbertoId === parseInt(item.id) ? 'rotate-180' : ''}`}
               fill="none"
               stroke="currentColor"
               strokeWidth={2}
@@ -135,8 +189,12 @@ export const EquipamentosTable: React.FC = () => {
             </svg>
           </button>
 
-          {dropdownAbertoId === item.id && (
-            <div className="absolute mt-1 right-0 w-36 bg-white border border-gray-300 rounded shadow-lg z-10">
+          {dropdownAbertoId === parseInt(item.id) && (
+           <div className="fixed z-50 bg-white border border-gray-300 rounded shadow-lg"
+            style={{
+              top: dropdownPosition.top,
+              left: dropdownPosition.left
+            }}>
               <ActionButtons
                 onEdit={() => { setEditingEquipamento(item); setFormNome(item.nome); setFormCodigo(item.codigoIdentificacao); setIsModalOpen(true); setDropdownAbertoId(null); }}
                 onDelete={() => { onDelete(item.id); setDropdownAbertoId(null); }}
