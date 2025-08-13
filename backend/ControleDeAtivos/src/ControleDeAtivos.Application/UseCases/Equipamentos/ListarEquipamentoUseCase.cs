@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ControleDeAtivos.Application.services.Equipamentos
+namespace ControleDeAtivos.Application.UseCases.Equipamentos
 {
     public class ListarEquipamentoservice : IListarEquipamentoService
     {

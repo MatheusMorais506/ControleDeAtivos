@@ -3,7 +3,7 @@ using ControleDeAtivos.Application.Responses.Equipamento;
 using ControleDeAtivos.Domain.Entities;
 using ControleDeAtivos.Domain.Repositories;
 
-namespace ControleDeAtivos.Application.services.Equipamentos
+namespace ControleDeAtivos.Application.UseCases.Equipamentos
 {
     public class CadastrarEquipamentoservice : ICadastrarEquipamentoService
     {

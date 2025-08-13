@@ -11,6 +11,7 @@ namespace ControleDeAtivos.Domain.Repositories
     {
         Task<List<Equipamento>> ObterTodosAsync();
         Task<Equipamento?> ObterPorIdAsync(int id);
+        Task<bool> CodigoIdentificacaoJaExisteAsync(string codigoIdentificacao);
         Task AdicionarAsync(Equipamento equipamento);
         void Remover(Equipamento equipamento);
         void Atualizar(Equipamento equipamento);

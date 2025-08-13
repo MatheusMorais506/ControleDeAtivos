@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ControleDeAtivos.Application.services.Autenticacao
+namespace ControleDeAtivos.Application.UseCases.Autenticacao
 {
     public class Logoutservice : ILogoutService
     {

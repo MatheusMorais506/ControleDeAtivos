@@ -3,7 +3,7 @@ using ControleDeAtivos.Application.Interfaces.Usuarios;
 using ControleDeAtivos.Domain.Exceptions;
 using ControleDeAtivos.Domain.Repositories;
 
-namespace ControleDeAtivos.Application.services.Usuarios
+namespace ControleDeAtivos.Application.UseCases.Usuarios
 {
     public class RemoverUsuarioservice : IRemoverUsuarioService
     {
