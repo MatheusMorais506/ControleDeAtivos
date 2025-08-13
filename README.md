@@ -20,11 +20,11 @@ O **Controle de Ativos** é uma ferramenta desenvolvida para gerenciar equipamen
 ## Estrutura do Projeto
 | Pasta / Arquivo                      | Descrição                                      |
 |-------------------------------------|------------------------------------------------|
-| src/ControleDeAtivos.Api/            | Backend (API ASP.NET Core)                     |
-| src/ControleDeAtivos.Application/    | Camada de aplicação: serviços, casos de uso, DTOs |
-| src/ControleDeAtivos.Domain/         | Camada de domínio: entidades e regras de negócio |
-| src/ControleDeAtivos.Infrastructure/ | Persistência, migrations, contexto EF         |
-| src/frontend/                        | Frontend React/Next.js                         |
+| backend/src/ControleDeAtivos.Api/            | Backend (API ASP.NET Core)                     |
+| backend/src/ControleDeAtivos.Application/    | Camada de aplicação: serviços, casos de uso, DTOs |
+| backend/src/ControleDeAtivos.Domain/         | Camada de domínio: entidades e regras de negócio |
+| backend/src/ControleDeAtivos.Infrastructure/ | Persistência, migrations, contexto EF         |
+| frontend/                        | Frontend React/Next.js                         |
 | docker-compose.yml                   | Configuração de containers Docker             |
 | README.md                            | Documentação do projeto                        |
 
