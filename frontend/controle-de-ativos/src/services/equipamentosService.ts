@@ -1,5 +1,6 @@
 import { Equipamento } from '@/types/Equipamento';
 import api from '@/lib/api';
+import { normalizeError } from '@/lib/normalizeError';
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/Equipamentos`;
 
@@ -8,7 +9,7 @@ export async function consultarEquipamento(): Promise<Equipamento[]> {
     const res = await api.get(API_URL);
     return res.data;
   } catch (error) {
-    throw new Error('Erro ao buscar equipamentos');
+    throw normalizeError(error);
   }
 }
 
@@ -17,7 +18,7 @@ export async function registrarEquipamento(nome: string, codigoIdentificacao: st
     const res = await api.post(API_URL, { nome, codigoIdentificacao });
     return res.data;
   } catch (error) {
-    throw new Error('Erro ao adicionar ativo');
+    throw normalizeError(error);
   }
 }
 
@@ -26,7 +27,7 @@ export async function emprestarEquipamento(id: string, nota: string): Promise<Eq
     const res = await api.put(`${API_URL}/${id}/emprestar`, { nota });
     return res.data;
   } catch (error) {
-    throw new Error('Erro ao realizar empréstimo');
+    throw normalizeError(error);
   }
 }
 
@@ -35,7 +36,7 @@ export async function devolverEquipamento(id: string): Promise<Equipamento> {
     const res = await api.put(`${API_URL}/${id}/devolver`);
     return res.data;
   } catch (error) {
-    throw new Error('Erro ao registrar devolução');
+    throw normalizeError(error);
   }
 }
 
@@ -43,7 +44,7 @@ export async function deletarEquipamento(id: string): Promise<void> {
   try {
     await api.delete(`${API_URL}/${id}`);
   } catch (error) {
-    throw new Error('Erro ao remover ativo');
+    throw normalizeError(error);
   }
 }
 
@@ -53,6 +54,6 @@ export async function atualizarEquipamento(
     const res = await api.put(`${API_URL}/${id}/atualizar`, { nome, codigoIdentificacao, notaEmprestimo });
     return res.data;
   } catch (error) {
-    throw new Error('Erro ao atualizar ativo');
+    throw normalizeError(error);
   }
 }

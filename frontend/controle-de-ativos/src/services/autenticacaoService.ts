@@ -1,4 +1,5 @@
 import api from '@/lib/api';
+import { normalizeError } from '@/lib/normalizeError';
 import { LoginCredentials } from '@/types/LoginCredentials';
 import { Usuario } from '@/types/Usuario';
 
@@ -9,7 +10,7 @@ export async function loginService(credentials: LoginCredentials): Promise<Usuar
     const res = await api.post(API_URL, credentials);
     return res.data.usuario;
   } catch (error) {
-    throw new Error('Credenciais inválidas');
+    throw normalizeError(error);
   }
 }
 
@@ -17,7 +18,7 @@ export async function logoutService(): Promise<void> {
   try {
     await api.post(`${API_URL}/logout`);
   } catch (error) {
-    throw new Error('Erro ao sair');
+    throw normalizeError(error);
   }
 }
 
