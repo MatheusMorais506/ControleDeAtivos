@@ -1,7 +1,7 @@
 ﻿using ControleDeAtivos.Application.Interfaces.Equipamentos;
 using ControleDeAtivos.Application.Requests.Equipamento;
 using ControleDeAtivos.Application.Responses.Equipamento;
-using ControleDeAtivos.Application.services.Equipamentos;
+using ControleDeAtivos.Application.UseCases.Equipamentos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

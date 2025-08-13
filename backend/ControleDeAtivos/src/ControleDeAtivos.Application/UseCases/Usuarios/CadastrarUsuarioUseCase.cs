@@ -5,7 +5,7 @@ using ControleDeAtivos.Domain.Entities;
 using ControleDeAtivos.Domain.Enums;
 using ControleDeAtivos.Domain.Repositories;
 
-namespace ControleDeAtivos.Application.services.Usuarios
+namespace ControleDeAtivos.Application.UseCases.Usuarios
 {
     public class CadastrarUsuarioservice : ICadastrarUsuarioService
     {

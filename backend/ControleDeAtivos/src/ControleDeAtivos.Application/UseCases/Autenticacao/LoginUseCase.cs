@@ -6,7 +6,7 @@ using ControleDeAtivos.Application.Responses.Usuario;
 using ControleDeAtivos.Domain.Entities;
 using ControleDeAtivos.Domain.Repositories;
 
-namespace ControleDeAtivos.Application.services.Autenticacao
+namespace ControleDeAtivos.Application.UseCases.Autenticacao
 {
     public class Loginservice : ILoginService
     {

@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ControleDeAtivos.Application.services.Usuarios
+namespace ControleDeAtivos.Application.UseCases.Usuarios
 {
     public class ConsultarUsuariosservice : IConsultarUsuarioService
     {

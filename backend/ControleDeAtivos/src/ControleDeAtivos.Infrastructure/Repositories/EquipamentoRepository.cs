@@ -12,6 +12,11 @@ namespace ControleDeAtivos.Infrastructure.Repositories
 
         public async Task<List<Equipamento>> ObterTodosAsync() => await _context.Equipamentos.ToListAsync();
         public async Task<Equipamento?> ObterPorIdAsync(int id) => await _context.Equipamentos.FindAsync(id);
+        public async Task<bool> CodigoIdentificacaoJaExisteAsync(string codigoIdentificacao)
+        {
+            return await _context.Equipamentos
+                                 .AnyAsync(e => e.CodigoIdentificacao == codigoIdentificacao);
+        }
         public async Task AdicionarAsync(Equipamento equipamento) => await _context.Equipamentos.AddAsync(equipamento);
         public void Atualizar(Equipamento equipamento) => _context.Equipamentos.Update(equipamento);
         public void Remover(Equipamento equipamento) => _context.Equipamentos.Remove(equipamento);
