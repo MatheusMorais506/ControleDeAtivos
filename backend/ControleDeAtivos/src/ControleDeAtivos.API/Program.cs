@@ -1,4 +1,6 @@
 using ControleDeAtivos.Api.Filters;
+using ControleDeAtivos.API.Filters;
+using ControleDeAtivos.API.Middlewares;
 using ControleDeAtivos.Application.Interfaces.Autenticacao;
 using ControleDeAtivos.Application.Interfaces.Equipamentos;
 using ControleDeAtivos.Application.Interfaces.Token;
@@ -109,6 +111,8 @@ builder.Services.AddSwaggerGen(c =>
             new List<string>()
         }
     });
+
+    c.OperationFilter<AuthorizeCheckOperationFilter>();
 });
 
 builder.Services.AddValidatorsFromAssemblyContaining<CadastrarEquipamentoRequestValidator>();
@@ -155,12 +159,21 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "API Controle de Ativos v1");
+    c.RoutePrefix = string.Empty;
+});
+
 //app.UseHttpsRedirection();
 
 app.UseCors("AllowSpecificOrigins");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.MapControllers();
 
