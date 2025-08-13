@@ -1,5 +1,5 @@
 export const routes = {
   login: '/login',
-  ativos: '/equipamentos',
+  equipamentos: '/equipamentos',
   usuarios: '/usuarios',
 };

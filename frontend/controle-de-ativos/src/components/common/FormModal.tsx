@@ -6,7 +6,7 @@ interface FormModalProps {
   title: string;
   onClose: () => void;
   onSubmit: (e: React.FormEvent) => void;
-  children: ReactNode; // campos dinâmicos
+  children: ReactNode;
 }
 
 export function FormModal({ isOpen, title, onClose, onSubmit, children }: FormModalProps) {
@@ -22,13 +22,13 @@ export function FormModal({ isOpen, title, onClose, onSubmit, children }: FormMo
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-400"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              className="px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-500"
             >
               Salvar
             </button>

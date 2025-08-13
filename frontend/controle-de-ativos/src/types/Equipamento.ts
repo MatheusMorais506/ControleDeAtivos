@@ -3,8 +3,8 @@ import { EquipamentoStatusType } from "./EquipamentoStatus";
 export interface Equipamento {
   id: string;
   nome: string;
-  codigo: string;
+  codigoIdentificacao: string;
   status: EquipamentoStatusType;
-  nota: string;
+  notaEmprestimo: string;
   acoes?: string[];
 }

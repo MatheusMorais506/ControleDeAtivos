@@ -14,9 +14,9 @@ export const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
           onClick={toggleSidebar}
           className="text-teal-600 hover:text-teal-800"
         >
-        <FaBars size={20} />
+          <FaBars size={20} />
         </button>
-        <h1 className="font-bold text-gray-700">Sistema de Controle</h1>
+        <h1 className="font-bold text-gray-700"></h1>
         <div></div>
       </header>
     </AuthGuard>

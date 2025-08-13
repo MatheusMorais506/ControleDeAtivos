@@ -8,6 +8,7 @@ import { Footer } from '@/components/layout/Footer';
 import { AuthProvider } from '@/context/AutenticacaoContext';
 import './globals.css';
 import { ToastProvider } from '@/lib/toastLib';
+import clsx from 'clsx';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -19,12 +20,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="flex bg-gray-50 min-h-screen">
         <AuthProvider>
           {!isLoginPage && <Sidebar isExpanded={isExpanded} />}
-          <div className="flex flex-col flex-1">
-            {!isLoginPage && <Navbar toggleSidebar={() => setIsExpanded(!isExpanded)} />}
-            <main className={`flex-1 ${isLoginPage ? 'p-0 flex overflow-hidden' : 'p-4'}`}>
-              <ToastProvider>
-                {children}
-              </ToastProvider>
+
+          <div
+            className={clsx(
+              'flex flex-col flex-1 h-screen overflow-auto transition-all duration-300',
+              !isLoginPage && (isExpanded ? 'ml-60' : 'ml-14')
+            )}
+          >
+            {!isLoginPage && (
+              <Navbar toggleSidebar={() => setIsExpanded(!isExpanded)} />
+            )}
+            <main className={`flex-1 ${isLoginPage ? 'p-0 flex' : 'p-4'}`}>
+              <ToastProvider>{children}</ToastProvider>
             </main>
             <Footer />
           </div>

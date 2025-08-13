@@ -1,5 +1,11 @@
 .botoesAcao {
-    width: 60%;
+    width: 90%;
     color: #fff;
     font-weight: 600;
+}
+
+.containerBotoes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

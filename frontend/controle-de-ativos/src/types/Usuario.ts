@@ -4,7 +4,7 @@ export interface Usuario {
   nome: string;
   email: string;
   senha: string;
-  status: number;
-  perfil: number;
+  statusId: string;
+  perfilId: string;
   acoes?: string[];
 }

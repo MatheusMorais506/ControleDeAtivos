@@ -1,4 +1,3 @@
-// EquipamentoStatus.ts
 export const EquipamentoStatus = {
   Disponivel: false,
   EmUso: true,

@@ -7,12 +7,10 @@ export function middleware(req: NextRequest) {
   const token = req.cookies.get('token')?.value;
   const { pathname } = req.nextUrl;
 
-  // Permitir páginas públicas mesmo sem token
   if (publicPaths.some(path => pathname.startsWith(path))) {
     return NextResponse.next();
   }
 
-  // Se não tem token, redireciona para login
   if (!token) {
     return NextResponse.redirect(new URL('/login', req.url));
   }
@@ -21,5 +19,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/usuarios/:path*', '/dashboard/:path*'], // rotas protegidas
+  matcher: ['/usuarios/:path*', '/dashboard/:path*'],
 };

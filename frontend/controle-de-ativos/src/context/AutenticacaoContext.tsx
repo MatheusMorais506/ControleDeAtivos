@@ -37,7 +37,7 @@ useEffect(() => {
   const AutenticarUsuario = async (credentials: LoginCredentials) => {
     const loggedUser = await loginService(credentials);
     setUser(loggedUser);
-    router.push(routes.usuarios);
+    router.push(routes.equipamentos);
   };
 
   const logout = () => {
