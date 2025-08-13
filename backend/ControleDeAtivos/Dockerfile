@@ -1,24 +1,26 @@
+# Etapa de build
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copia o arquivo de solução
+# Copia a solução e os projetos
 COPY ControleDeAtivos.sln ./
-
-# Copia cada projeto mantendo a estrutura original
 COPY src ./src
 
 # Restaura dependências
 RUN dotnet restore ControleDeAtivos.sln
 
-# Copia o restante (se houver arquivos extras)
-# COPY . .
+# Publica o projeto principal para uma pasta chamada /publish
+RUN dotnet publish src/ControleDeAtivos.API/ControleDeAtivos.API.csproj -c Release -o /publish /p:UseAppHost=false
 
-# Publica
-RUN dotnet publish ControleDeAtivos.sln -c Release -o /app
-
-# Runtime
+# Etapa de runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-COPY --from=build /app .
+
+# Copia os arquivos publicados da etapa de build
+COPY --from=build /publish ./
+
+# Expõe a porta
 EXPOSE 5000
-ENTRYPOINT ["dotnet", "ControleDeAtivos.dll"]
+
+# Executa a aplicação
+ENTRYPOINT ["dotnet", "ControleDeAtivos.API.dll"]

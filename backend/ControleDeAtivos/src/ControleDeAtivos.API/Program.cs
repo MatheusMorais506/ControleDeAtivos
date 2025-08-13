@@ -13,6 +13,7 @@ using ControleDeAtivos.Infrastructure.Data;
 using ControleDeAtivos.Infrastructure.Repositories;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -22,12 +23,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-var contentRoot = builder.Environment.ContentRootPath;
-var solutionRoot = Path.GetFullPath(Path.Combine(contentRoot, "..", ".."));
-var dbPath = Path.Combine(solutionRoot, "database", "ControleDeAtivos.db");
+//var contentRoot = builder.Environment.ContentRootPath;
+//var solutionRoot = Path.GetFullPath(Path.Combine(contentRoot, "..", ".."));
+//var dbPath = Path.Combine(solutionRoot, "database", "ControleDeAtivos.db");
+//builder.Services.AddDbContext<AppDbContext>(options =>
+//    options.UseSqlite($"Data Source={dbPath}"));
 
+var dbPath = "/database/ControleDeAtivos.db";
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite($"Data Source={dbPath}"));
+
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo("/database/DataProtection-Keys"));
 
 builder.Services.AddScoped<IEquipamentoRepository, EquipamentoRepository>();
 builder.Services.AddScoped<ICadastrarEquipamentoService, CadastrarEquipamentoservice>();
@@ -148,7 +155,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseCors("AllowSpecificOrigins");
 

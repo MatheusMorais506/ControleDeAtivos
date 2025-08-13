@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { UsuariosProvider } from '@/context/UsuariosContext';
 import UsuarioClient from './UsuarioClient';
 import { consultarUsuario } from '@/services/usuariosService';

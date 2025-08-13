@@ -11,9 +11,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControleDeAtivos.Applicatio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControleDeAtivos.Domain", "src\ControleDeAtivos.Domain\ControleDeAtivos.Domain.csproj", "{FAD9076C-B098-F82D-DF6E-B8AB10196FC4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControleDeAtivos.Infrastructure", "src\ControleDeAtivos.Infrastructure\ControleDeAtivos.Infrastructure.csproj", "{95017E98-0567-6472-B504-591E49560A9C}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{CD4A5049-A797-4CF1-B7BD-286002D6752C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControleDeAtivos.Infrastructure", "src\ControleDeAtivos.Infrastructure\ControleDeAtivos.Infrastructure.csproj", "{95017E98-0567-6472-B504-591E49560A9C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

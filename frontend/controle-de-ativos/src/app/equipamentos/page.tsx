@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { EquipamentosProvider } from '@/context/EquipamentosContext';
 import { consultarEquipamento } from '@/services/equipamentosService';
 import EquipamentosClient from './EquipamentosClient';
@@ -8,12 +10,6 @@ export default async function EquipamentosPage() {
   const equipamentos = await consultarEquipamento();
 
   return (
-    //  <AuthGuard>
-    //     <EquipamentosProvider initialEquipamentos={equipamentos}>
-    //       <EquipamentosClient />
-    //     </EquipamentosProvider>
-    //  </AuthGuard>
-
     <EquipamentosProvider initialEquipamentos={equipamentos}>
       <EquipamentosClient />
     </EquipamentosProvider>

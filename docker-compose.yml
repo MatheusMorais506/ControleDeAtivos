@@ -5,15 +5,21 @@ services:
     build: ./backend/ControleDeAtivos
     ports:
       - "5000:5000"
+    environment:
+      ASPNETCORE_URLS: http://+:5000
+    volumes:
+        - ./backend/ControleDeAtivos/database:/database
+        - ./backend/dataprotection:/root/.aspnet/DataProtection-Keys
     dns:
       - 8.8.8.8
       - 8.8.4.4
 
   frontend:
-    build: ./frontend/controle-de-ativos
+    build:
+      context: ./frontend/controle-de-ativos
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:5000
     ports:
       - "3000:3000"
-    environment:
-      NEXT_PUBLIC_API_URL: http://backend:5000
     depends_on:
       - backend
