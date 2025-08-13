@@ -37,7 +37,7 @@ Antes de executar o projeto, instale:
 ## Executando a Aplicação
 1. Clone este repositório:
    ```bash
-   git clone https://github.com/seu-usuario/seu-repo.git
+   git clone https://github.com/MatheusMorais506/ControleDeAtivos.git
    cd seu-repo
 
 2. Abra o cmd/gitbash na pasta raiz do projeto(ControleDeAtivos) e execute o Docker Compose para construir e subir os containers:
