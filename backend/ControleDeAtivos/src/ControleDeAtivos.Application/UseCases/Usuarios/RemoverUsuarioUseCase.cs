@@ -1,5 +1,6 @@
 ﻿using ControleDeAtivos.Application.Interfaces.Equipamentos;
 using ControleDeAtivos.Application.Interfaces.Usuarios;
+using ControleDeAtivos.Domain.Enums;
 using ControleDeAtivos.Domain.Exceptions;
 using ControleDeAtivos.Domain.Repositories;
 
@@ -15,6 +16,12 @@ namespace ControleDeAtivos.Application.UseCases.Usuarios
         {
             var usuario = await _repo.ObterPorIdAsync(id)
                 ?? throw new KeyNotFoundException("Usuário não encontrado");
+
+            var statusInativo = (int)StatusUsuario.Inativo;
+
+            usuario.AtualizarStatus(
+                statusInativo
+            );
 
             await _repo.RemoverAsync(usuario);
             await _repo.SalvarAsync();

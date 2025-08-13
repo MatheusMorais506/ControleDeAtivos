@@ -27,12 +27,22 @@ namespace ControleDeAtivos.Infrastructure.Repositories
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
 
+        public async Task<Usuario?> ObterPorLoginAsync(string login)
+        {
+            return await _context.Usuarios
+                .Include(u => u.Status)
+                .Include(u => u.Perfil)
+                .FirstOrDefaultAsync(u => u.Login == login);
+        }
+
         public async Task AdicionarAsync(Usuario usuario) => await _context.Usuarios.AddAsync(usuario);
         
         public async Task AtualizarAsync(Usuario usuario) => _context.Usuarios.Update(usuario);
-        
-        public async Task RemoverAsync(Usuario usuario) => _context.Usuarios.Remove(usuario);
-        
+
+        //public async Task RemoverAsync(Usuario usuario) => _context.Usuarios.Remove(usuario);
+
+        public async Task RemoverAsync(Usuario usuario) => _context.Usuarios.Update(usuario);
+
         public async Task SalvarAsync() => await _context.SaveChangesAsync();
     }
 }
