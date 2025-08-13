@@ -1,13 +1,6 @@
 'use client';
-import { ReactNode } from 'react';
 
-interface FormModalProps {
-  isOpen: boolean;
-  title: string;
-  onClose: () => void;
-  onSubmit: (e: React.FormEvent) => void;
-  children: ReactNode;
-}
+import { FormModalProps } from '@/types/FormModalProps';
 
 export function FormModal({ isOpen, title, onClose, onSubmit, children }: FormModalProps) {
   if (!isOpen) return null;
