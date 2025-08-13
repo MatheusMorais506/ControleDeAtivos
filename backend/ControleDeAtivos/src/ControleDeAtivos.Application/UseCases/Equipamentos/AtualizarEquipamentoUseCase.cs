@@ -16,7 +16,7 @@ namespace ControleDeAtivos.Application.UseCases.Equipamentos
         public async Task AtualizarAsync(int id, RequestCadastrarEquipamentoJson equipamento)
         {
             var equipamentoEncontrado = await _repo.ObterPorIdAsync(id)
-                ?? throw new DomainException("Equipamento não encontrado.");
+                ?? throw new KeyNotFoundException("Equipamento não encontrado");
 
             equipamentoEncontrado.AtualizarDados(equipamento.Nome, equipamento.CodigoIdentificacao);
 

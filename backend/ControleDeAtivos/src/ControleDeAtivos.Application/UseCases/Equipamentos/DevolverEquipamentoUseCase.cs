@@ -13,7 +13,7 @@ namespace ControleDeAtivos.Application.UseCases.Equipamentos
         public async Task DevolverAsync(int id)
         {
             var equipamento = await _repo.ObterPorIdAsync(id)
-                ?? throw new DomainException("Equipamento não encontrado.");
+                ?? throw new KeyNotFoundException("Equipamento não encontrado");
 
             equipamento.RegistrarDevolucao();
 

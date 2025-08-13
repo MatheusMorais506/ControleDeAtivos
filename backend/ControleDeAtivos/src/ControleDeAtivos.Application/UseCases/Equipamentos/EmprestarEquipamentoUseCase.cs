@@ -13,7 +13,10 @@ namespace ControleDeAtivos.Application.UseCases.Equipamentos
         public async Task EmprestarAsync(int id, string nota)
         {
             var equipamento = await _repo.ObterPorIdAsync(id)
-                ?? throw new DomainException("Equipamento não encontrado.");
+                ?? throw new KeyNotFoundException("Equipamento não encontrado");
+
+            if (!string.IsNullOrWhiteSpace(equipamento.NotaEmprestimo))
+                throw new InvalidOperationException("Equipamento já está emprestado");
 
             equipamento.RealizarEmprestimo(nota);
 
