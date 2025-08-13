@@ -31,6 +31,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
       title: 'Tem certeza que deseja sair?',
       icon: 'warning',
       showCancelButton: true,
+      confirmButtonColor: '#0F766EFF',
+      cancelButtonColor: '#DC2626FF',
       confirmButtonText: 'Sim',
       cancelButtonText: 'Não',
       reverseButtons: true,
@@ -79,55 +81,3 @@ export const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
     </AuthGuard>
   );
 };
-
-interface NavbarProps {
-  toggleSidebar: () => void;
-}
-
-export const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
-  return (
-    <AuthGuard>
-      <header className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between">
-        <button
-          onClick={toggleSidebar}
-          className="text-teal-600 hover:text-teal-800"
-        >
-          <FaBars size={20} />
-        </button>
-        <h1 className="font-bold text-gray-700"></h1>
-        <div></div>
-      </header>
-    </AuthGuard>
-  );
-};
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const [isExpanded, setIsExpanded] = useState(true);
-  const pathname = usePathname();
-  const isLoginPage = pathname === '/' || pathname === '/login';
-
-  return (
-    <html lang="pt-br">
-      <body className="flex bg-gray-50 min-h-screen">
-        <AuthProvider>
-          {!isLoginPage && <Sidebar isExpanded={isExpanded} />}
-
-          <div
-            className={clsx(
-              'flex flex-col flex-1 h-screen overflow-auto transition-all duration-300',
-              !isLoginPage && (isExpanded ? 'ml-60' : 'ml-14')
-            )}
-          >
-            {!isLoginPage && (
-              <Navbar toggleSidebar={() => setIsExpanded(!isExpanded)} />
-            )}
-            <main className={`flex-1 ${isLoginPage ? 'p-0 flex' : 'p-4'}`}>
-              <ToastProvider>{children}</ToastProvider>
-            </main>
-            <Footer />
-          </div>
-        </AuthProvider>
-      </body>
-    </html>
-  );
-}
