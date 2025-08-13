@@ -11,8 +11,8 @@ export function DataTable<T>({
   data,
   columns,
   searchKeys = [],
-  itemsPerPageOptions = [10, 20, 50, 100],
-  defaultItemsPerPage = 20,
+  itemsPerPageOptions = [7,15, 20, 50, 100],
+  defaultItemsPerPage = 7,
 }: DataTableProps<T>) {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
