@@ -10,6 +10,7 @@ import { Usuario } from '@/types/Usuario';
 import Swal from 'sweetalert2';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { validateUsuarioForm } from '@/utils/validateUsuarioForm';
+import { showError, showSuccess } from '@/lib/toastLib';
 
 export const UsuarioTable: React.FC = () => {
   const { usuarios } = useUsuariosContext();
@@ -19,6 +20,7 @@ export const UsuarioTable: React.FC = () => {
   const [editingUsuario, setEditingUsuario] = useState<Usuario | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [dropdownAbertoId, setDropdownAbertoId] = useState<number | null>(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
 
   const [formLogin, setFormLogin] = useState('');
   const [formNome, setFormNome] = useState('');
@@ -29,6 +31,25 @@ export const UsuarioTable: React.FC = () => {
   const [mostrarSenha, setMostrarSenha] = useState(false);
 
   useEffect(() => { fetchUsuarios(); }, [fetchUsuarios]);
+
+  useEffect(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    const target = event.target as HTMLElement;
+    if (!target.closest(".dropdown-menu") && !target.closest(".dropdown-button")) {
+      setDropdownAbertoId(null);
+    }
+  };
+
+  if (dropdownAbertoId !== null) {
+    document.addEventListener("click", handleClickOutside);
+  } else {
+    document.removeEventListener("click", handleClickOutside);
+  }
+
+  return () => {
+    document.removeEventListener("click", handleClickOutside);
+  };
+}, [dropdownAbertoId]);
 
   const openAddModal = () => {
     setEditingUsuario(null);
@@ -76,12 +97,15 @@ export const UsuarioTable: React.FC = () => {
     try {
       if (editingUsuario) {
         await editUsuario(editingUsuario.id, usuarioData);
+        showSuccess('Usuário atualizado com sucesso!');
       } else {
         await addUsuario(usuarioData);
+        showSuccess('Usuário adicionado com sucesso!');
       }
       closeModal();
     } catch (err) {
       setActionError((err as Error).message || 'Erro desconhecido');
+      showError("Processo não realizado!");
     }
   };
 
@@ -91,22 +115,36 @@ export const UsuarioTable: React.FC = () => {
       text: 'Você não poderá reverter esta ação!',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Sim, deletar!',
-      cancelButtonText: 'Cancelar'
+      confirmButtonColor: '#0F766EFF',
+      cancelButtonColor: '#DC2626FF',
+      confirmButtonText: 'Sim',
+      cancelButtonText: 'Não'
     });
 
     if (result.isConfirmed) {
       try {
         await removeUsuario(id);
         setDropdownAbertoId(null);
-        Swal.fire('Deletado!', 'O usuário foi removido.', 'success');
+        showSuccess('Usuário removido com sucesso!');
       } catch (err) {
-        Swal.fire('Erro!', (err as Error).message || 'Erro ao remover usuário', 'error');
+        showError((err as Error).message || 'Erro ao remover usuário');
       }
     }
   };
+
+const handleToggleDropdown = (e: React.MouseEvent, id: number) => {
+  e.stopPropagation();
+  if (dropdownAbertoId === id) {
+    setDropdownAbertoId(null);
+  } else {
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    setDropdownPosition({
+      top: rect.bottom + window.scrollY,
+      left: rect.left + window.scrollX
+    });
+    setDropdownAbertoId(id);
+  }
+};
 
   const columns: Column<Usuario>[] = [
     { key: 'login', label: 'Login' },
@@ -132,7 +170,7 @@ export const UsuarioTable: React.FC = () => {
       render: u => (
         <div className="relative inline-block text-left">
           <button
-            onClick={() => setDropdownAbertoId(prev => (prev === u.id ? null : u.id))}
+            onClick={(e) => handleToggleDropdown(e, u.id)}
             className="inline-flex items-center gap-1 bg-teal-200 text-teal-800 text-sm font-semibold px-3 py-1 rounded cursor-pointer hover:bg-teal-300 focus:outline-none focus:ring-2 focus:ring-teal-400"
           >
             Ações
@@ -148,7 +186,11 @@ export const UsuarioTable: React.FC = () => {
           </button>
 
           {dropdownAbertoId === u.id && (
-            <div className="absolute mt-1 right-0 w-36 bg-white border border-gray-300 rounded shadow-lg z-10">
+          <div className="fixed z-50 bg-white border border-gray-300 rounded shadow-lg"
+            style={{
+              top: dropdownPosition.top,
+              left: dropdownPosition.left
+            }}>
               <ActionButtons
                 onEdit={() => {
                   setEditingUsuario(u);
