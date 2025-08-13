@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
@@ -9,11 +9,19 @@ import { AuthProvider } from '@/context/AutenticacaoContext';
 import './globals.css';
 import { ToastProvider } from '@/lib/toastLib';
 import clsx from 'clsx';
+import { setCurrentPath } from '@/lib/api';
+import { setNavegacao } from '@/lib/navegacao';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [isExpanded, setIsExpanded] = useState(true);
   const pathname = usePathname();
+  const router = useRouter();
   const isLoginPage = pathname === '/' || pathname === '/login';
+
+  useEffect(() => {
+  setCurrentPath(pathname);
+  setNavegacao(router.push);
+  }, [pathname, router]);
 
   return (
     <html lang="pt-br">
@@ -23,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           <div
             className={clsx(
-              'flex flex-col flex-1 h-screen overflow-auto transition-all duration-300',
+              'flex flex-col flex-1 h-screen overflow-y-auto overflow-x-hidden transition-all duration-300',
               !isLoginPage && (isExpanded ? 'ml-60' : 'ml-14')
             )}
           >
