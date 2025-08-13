@@ -28,8 +28,8 @@ namespace ControleDeAtivos.Application.UseCases.Usuarios
                 request.Nome,
                 request.Email,
                 request.Senha,
-                request.Status,
-                request.Perfil
+                request.StatusId,
+                request.PerfilId
             );
 
             await _repo.AtualizarAsync(usuario);

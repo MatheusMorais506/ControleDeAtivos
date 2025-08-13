@@ -36,13 +36,18 @@ namespace ControleDeAtivos.Domain.Entities
             NotaEmprestimo = null;
         }
 
-        public void AtualizarDados(string nome, string codigoIdentificacao)
+        public void AtualizarDados(string nome, string codigoIdentificacao, string notaEmprestimo)
         {
             if (string.IsNullOrWhiteSpace(nome))
                 throw new DomainException("O nome não pode ser vazio.");
 
             if (string.IsNullOrWhiteSpace(codigoIdentificacao))
                 throw new DomainException("O código de identificação não pode ser vazio.");
+
+            if (!string.IsNullOrWhiteSpace(notaEmprestimo))
+            {
+                NotaEmprestimo = notaEmprestimo;
+            }
 
             Nome = nome;
             CodigoIdentificacao = codigoIdentificacao;

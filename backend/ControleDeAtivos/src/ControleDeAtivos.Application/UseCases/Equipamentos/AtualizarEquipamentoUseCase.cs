@@ -18,7 +18,7 @@ namespace ControleDeAtivos.Application.UseCases.Equipamentos
             var equipamentoEncontrado = await _repo.ObterPorIdAsync(id)
                 ?? throw new KeyNotFoundException("Equipamento não encontrado");
 
-            equipamentoEncontrado.AtualizarDados(equipamento.Nome, equipamento.CodigoIdentificacao);
+            equipamentoEncontrado.AtualizarDados(equipamento.Nome, equipamento.CodigoIdentificacao, equipamento.NotaEmprestimo);
 
             _repo.Atualizar(equipamentoEncontrado);
             await _repo.SalvarAsync();
