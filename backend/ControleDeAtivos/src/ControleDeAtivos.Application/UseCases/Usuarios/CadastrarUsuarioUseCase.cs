@@ -18,6 +18,13 @@ namespace ControleDeAtivos.Application.UseCases.Usuarios
             if (string.IsNullOrWhiteSpace(dto.Login) || string.IsNullOrWhiteSpace(dto.Senha))
                 throw new ArgumentException("Login e senha são obrigatórios");
 
+            var loginExiste = _repo.ObterPorLoginAsync(dto.Login);
+
+            if (loginExiste.Result != null)
+            {
+                throw new ArgumentException("Login já cadastrado");
+            }
+
             var usuario = new Usuario(
                 dto.Login,
                 dto.Nome,
