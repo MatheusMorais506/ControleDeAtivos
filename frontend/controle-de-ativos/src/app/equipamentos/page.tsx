@@ -8,10 +8,15 @@ export default async function EquipamentosPage() {
   const equipamentos = await consultarEquipamento();
 
   return (
-     <AuthGuard>
-        <EquipamentosProvider initialEquipamentos={equipamentos}>
-          <EquipamentosClient />
-        </EquipamentosProvider>
-     </AuthGuard>
+    //  <AuthGuard>
+    //     <EquipamentosProvider initialEquipamentos={equipamentos}>
+    //       <EquipamentosClient />
+    //     </EquipamentosProvider>
+    //  </AuthGuard>
+
+    <EquipamentosProvider initialEquipamentos={equipamentos}>
+      <EquipamentosClient />
+    </EquipamentosProvider>
+
   );
 }
