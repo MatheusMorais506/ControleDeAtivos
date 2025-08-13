@@ -2,11 +2,14 @@ version: "3.9"
 
 services:
   backend:
-    build: ./backend/ControleDeAtivos
+    build:
+      context: ./backend/ControleDeAtivos
+      dockerfile: Dockerfile
     ports:
       - "5000:5000"
     environment:
       ASPNETCORE_URLS: http://+:5000
+      DOTNET_SYSTEM_NET_HTTP_USESOCKETSHTTPHANDLER: 0
     volumes:
         - ./backend/ControleDeAtivos/database:/database
         - ./backend/dataprotection:/root/.aspnet/DataProtection-Keys
@@ -17,9 +20,12 @@ services:
   frontend:
     build:
       context: ./frontend/controle-de-ativos
+      dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_API_URL: http://localhost:5000
     ports:
       - "3000:3000"
     depends_on:
       - backend
+    environment:
+      NODE_TLS_REJECT_UNAUTHORIZED: "0"
