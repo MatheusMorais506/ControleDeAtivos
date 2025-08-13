@@ -1,6 +1,12 @@
 import axios from 'axios';
+import { navigate } from './navegacao';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://backend:5000';
+
+let currentPath = '/';
+export function setCurrentPath(path: string) {
+  currentPath = path;
+}
 
 const api = axios.create({
   baseURL: API_URL,
@@ -11,22 +17,30 @@ const api = axios.create({
 });
 
 api.interceptors.response.use(
-  response => response,
-  async error => {
-    const originalRequest = error.config;
+  res => res,
+  async err => {
+    const originalRequest = err.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      err.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url?.includes('/refresh') &&
+      currentPath !== '/login' &&
+      currentPath !== '/'
+    ) {
       originalRequest._retry = true;
       try {
         await api.post('/api/Autenticacao/refresh');
         return api(originalRequest);
       } catch (refreshError) {
+        navigate('/login'); 
         return Promise.reject(refreshError);
       }
     }
 
-    return Promise.reject(error);
+    return Promise.reject(err);
   }
 );
+
 
 export default api;
