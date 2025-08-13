@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AutenticacaoContext';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { showError, showSuccess } from '@/lib/toastLib';
 
 export const Login: React.FC = () => {
   const { AutenticarUsuario } = useAuth();
@@ -20,6 +21,7 @@ export const Login: React.FC = () => {
       await AutenticarUsuario({ login, senha });
     } catch (err: any) {
       setError(err.message);
+      showError(err.message || 'Erro ao autenticar usuário');
     }
   };
 
@@ -67,7 +69,7 @@ export const Login: React.FC = () => {
             </div>
           </div>
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {/* {error && <p className="text-red-500 text-sm">{error}</p>} */}
 
           <button
             type="submit"
@@ -80,7 +82,3 @@ export const Login: React.FC = () => {
     </div>
   );
 };
-
-export default function LoginPage() {
-  return <Login />;
-}
