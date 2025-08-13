@@ -13,6 +13,8 @@ RUN npm install --legacy-peer-deps
 
 COPY . .
 
+RUN rm -rf /root/.cache/next-swc
+
 # Build do Next.js usa a variável acima
 RUN npm run build
 
