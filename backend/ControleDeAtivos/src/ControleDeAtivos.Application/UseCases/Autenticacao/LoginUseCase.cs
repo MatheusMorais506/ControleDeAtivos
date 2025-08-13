@@ -21,18 +21,17 @@ namespace ControleDeAtivos.Application.UseCases.Autenticacao
 
         public async Task<ResponseLoginJson> ExecuteAsync(RequestLoginJson request)
         {
-            var usuario = await _autenticacaoRepo.ValidarCredenciaisAsync(request.Login);
+            if (string.IsNullOrWhiteSpace(request.Login) || string.IsNullOrWhiteSpace(request.Senha))
+                throw new ArgumentException("Login e senha são obrigatórios");
 
-            if (usuario == null)
-                throw new UnauthorizedAccessException("Usuário inválido");
+            var usuario = await _autenticacaoRepo.ValidarCredenciaisAsync(request.Login)
+                ?? throw new UnauthorizedAccessException("Usuário inválido");
 
             bool senhaValida = BCrypt.Net.BCrypt.Verify(request.Senha, usuario.Senha);
-
             if (!senhaValida)
                 throw new UnauthorizedAccessException("Credenciais inválidas");
 
             var accessToken = _tokenService.GenerateToken(usuario);
-
             var refreshToken = RefreshToken.Gerar(usuario.Id);
 
             await _autenticacaoRepo.AdicionarRefreshTokenAsync(refreshToken);
@@ -53,7 +52,6 @@ namespace ControleDeAtivos.Application.UseCases.Autenticacao
                     PerfilId = usuario.Perfil.Id.ToString(),
                     StatusId = usuario.Status.Id.ToString(),
                     DataCadastro = usuario.DataCadastro.ToString()
-
                 },
                 RefreshToken = refreshToken.Token
             };

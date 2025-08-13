@@ -22,6 +22,9 @@ namespace ControleDeAtivos.Application.UseCases.Autenticacao
 
         public async Task<(string AccessToken, DateTime ExpiraEm, string RefreshToken)> ExecuteAsync(string refreshToken)
         {
+            if (string.IsNullOrWhiteSpace(refreshToken))
+                throw new ArgumentException("Refresh token é obrigatório");
+
             var tokenExistente = await _autenticacaoRepo.ObterRefreshTokenAsync(refreshToken)
                 ?? throw new UnauthorizedAccessException("Refresh token inválido");
 
@@ -29,7 +32,7 @@ namespace ControleDeAtivos.Application.UseCases.Autenticacao
                 throw new UnauthorizedAccessException("Refresh token expirado ou revogado");
 
             var usuario = await _autenticacaoRepo.ObterUsuarioPorIdAsync(tokenExistente.UsuarioId)
-                ?? throw new UnauthorizedAccessException("Usuário não encontrado");
+                ?? throw new KeyNotFoundException("Usuário não encontrado");
 
             tokenExistente.Revogar();
             await _autenticacaoRepo.AtualizarRefreshTokenAsync(tokenExistente);

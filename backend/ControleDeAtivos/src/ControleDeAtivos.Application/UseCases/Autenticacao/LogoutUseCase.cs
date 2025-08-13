@@ -20,13 +20,16 @@ namespace ControleDeAtivos.Application.UseCases.Autenticacao
 
         public async Task ExecuteAsync(RequestRefreshTokenJson request)
         {
+            if (string.IsNullOrWhiteSpace(request.RefreshToken))
+                throw new ArgumentException("Refresh token é obrigatório");
+
             var token = await _autenticacaoRepo.ObterRefreshTokenAsync(request.RefreshToken);
-            if (token != null)
-            {
-                token.Revogar();
-                await _autenticacaoRepo.AtualizarRefreshTokenAsync(token);
-                await _autenticacaoRepo.SalvarAlteracoesAsync();
-            }
+            if (token == null)
+                throw new KeyNotFoundException("Refresh token não encontrado");
+
+            token.Revogar();
+            await _autenticacaoRepo.AtualizarRefreshTokenAsync(token);
+            await _autenticacaoRepo.SalvarAlteracoesAsync();
         }
     }
 }
