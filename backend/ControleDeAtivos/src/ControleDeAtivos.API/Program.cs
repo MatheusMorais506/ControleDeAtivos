@@ -2,9 +2,11 @@ using ControleDeAtivos.Api.Filters;
 using ControleDeAtivos.API.Filters;
 using ControleDeAtivos.API.Middlewares;
 using ControleDeAtivos.Application.Interfaces.Autenticacao;
+using ControleDeAtivos.Application.Interfaces.Criptografia;
 using ControleDeAtivos.Application.Interfaces.Equipamentos;
 using ControleDeAtivos.Application.Interfaces.Token;
 using ControleDeAtivos.Application.Interfaces.Usuarios;
+using ControleDeAtivos.Application.Security;
 using ControleDeAtivos.Application.UseCases.Autenticacao;
 using ControleDeAtivos.Application.UseCases.Equipamentos;
 using ControleDeAtivos.Application.UseCases.Usuarios;
@@ -19,9 +21,23 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .MinimumLevel.Override("Microsoft", builder.Environment.IsDevelopment() ? Serilog.Events.LogEventLevel.Information : Serilog.Events.LogEventLevel.Warning)
+    .MinimumLevel.Override("System", builder.Environment.IsDevelopment() ? Serilog.Events.LogEventLevel.Information : Serilog.Events.LogEventLevel.Error)
+    .WriteTo.File(
+        path: "Logs/app-.log",
+        rollingInterval: RollingInterval.Day,
+        retainedFileCountLimit: 30,
+        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}"
+    )
+    .CreateLogger();
+builder.Host.UseSerilog();
 
 // Add services to the container.
 
@@ -53,6 +69,7 @@ builder.Services.AddScoped<IConsultarUsuarioService, ConsultarUsuariosservice>()
 builder.Services.AddScoped<IRemoverUsuarioService, RemoverUsuarioservice>();
 
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<ICryptoService, AesCryptoService>();
 
 builder.Services.AddScoped<IAutenticacaoRepository, AutenticacaoRepository>();
 builder.Services.AddScoped<ILoginService, Loginservice>();
