@@ -48,7 +48,6 @@ namespace ControleDeAtivos.Api.Controllers
         }
 
         [HttpPost("refresh")]
-        [Authorize]
         [ProducesResponseType(typeof(ResponseLoginJson), StatusCodes.Status200OK)]
         public async Task<IActionResult> Refresh(
             [FromServices] IRefreshService service,

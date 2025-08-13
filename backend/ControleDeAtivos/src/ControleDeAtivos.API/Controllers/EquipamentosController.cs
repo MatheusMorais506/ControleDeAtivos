@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ControleDeAtivos.Api.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class EquipamentosController : ControllerBase
