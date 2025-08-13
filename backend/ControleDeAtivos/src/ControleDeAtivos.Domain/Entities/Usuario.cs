@@ -41,7 +41,7 @@
             DefinirNome(nome);
             DefinirEmail(email);
             if (!string.IsNullOrWhiteSpace(senha))
-                DefinirSenha(senha);
+            DefinirSenha(senha);
             StatusId = statusId;
             PerfilId = perfilId;
         }
