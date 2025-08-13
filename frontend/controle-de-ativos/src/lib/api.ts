@@ -34,7 +34,7 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (refreshError) {
         navigate('/login'); 
-        return Promise.reject(refreshError);
+        return { data: null, status: 401 };
       }
     }
 
