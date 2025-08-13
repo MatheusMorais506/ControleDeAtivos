@@ -46,6 +46,6 @@ Antes de executar o projeto, instale:
 
 3. Acesse a aplicação:
    ```
-   Backend: http://localhost:5000
+   Backend: http://localhost:5000/index.html
    Frontend: http://localhost:3000
    Usuario de teste: admin / Senha: admin10
