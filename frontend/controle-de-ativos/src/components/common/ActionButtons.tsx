@@ -1,5 +1,5 @@
 'use client';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaExchangeAlt, FaTrash, FaUndo } from 'react-icons/fa';
 import styles from './ActionButtons.module.css';
 
 interface ActionButtonsProps {
@@ -15,7 +15,7 @@ export function ActionButtons({ onEdit, onDelete, onEmprestar, onDevolver }: Act
       {onEdit && (
         <button
           onClick={onEdit}
-          className={`${styles.botoesAcao} flex items-center gap-2 p-2 bg-yellow-400 rounded hover:bg-yellow-500`}
+          className={`${styles.botoesAcao} flex items-center gap-2 p-2 bg-teal-600 rounded hover:bg-teal-700`}
         >
           <FaEdit className="text-white" /> Atualizar
         </button>
@@ -23,17 +23,17 @@ export function ActionButtons({ onEdit, onDelete, onEmprestar, onDevolver }: Act
       {onEmprestar && (
         <button
           onClick={onEmprestar}
-          className={`${styles.botoesAcao} flex items-center gap-2 p-2 bg-orange-500 rounded hover:bg-orange-600`}
+          className={`${styles.botoesAcao} flex items-center gap-2 p-2 bg-teal-400 rounded hover:bg-teal-500`}
         >
-          <FaEdit className="text-white" /> Emprestar
+          <FaExchangeAlt className="text-white" /> Emprestar
         </button>
       )}
       {onDevolver && (
         <button
           onClick={onDevolver}
-          className={`${styles.botoesAcao} flex items-center gap-2 p-2 bg-green-500 rounded hover:bg-green-600`}
+          className={`${styles.botoesAcao} flex items-center gap-2 p-2 bg-teal-400 rounded hover:bg-teal-500`}
         >
-          <FaEdit className="text-white" /> Devolver
+          <FaUndo className="text-white" /> Devolver
         </button>
       )}
       {onDelete && (

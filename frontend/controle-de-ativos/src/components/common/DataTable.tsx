@@ -23,12 +23,10 @@ export function DataTable<T>({
   const [itemsPerPage, setItemsPerPage] = useState(defaultItemsPerPage);
   const [dropdownAbertoId, setDropdownAbertoId] = useState<string | number | null>(null);
 
-  // Função para fechar dropdown
   const fecharDropdown: () => void = () => {
     setDropdownAbertoId(null);
   };
 
-  // Filtra os dados pelo termo de pesquisa
   const filteredData = useMemo(() => {
     if (!searchTerm || searchKeys.length === 0) return data;
     const termo = searchTerm.toLowerCase();
@@ -40,7 +38,6 @@ export function DataTable<T>({
     );
   }, [data, searchTerm, searchKeys]);
 
-  // Paginação
   const totalItems = filteredData.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const paginatedData = filteredData.slice(
@@ -67,7 +64,8 @@ export function DataTable<T>({
         </div>
       )}
 
-      <table className="min-w-full bg-white border border-gray-200 rounded-md shadow-sm">
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border border-gray-200 rounded-md shadow-sm">
         <thead>
           <tr className="bg-teal-100 text-gray-700 text-sm font-semibold">
             {columns.map(col => (
@@ -97,7 +95,8 @@ export function DataTable<T>({
             </tr>
           )}
         </tbody>
-      </table>
+        </table>
+      </div>
 
       <div className="flex justify-between items-center mt-3 px-4 text-gray-600 text-sm">
         <div>
