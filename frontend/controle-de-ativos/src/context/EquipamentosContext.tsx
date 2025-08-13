@@ -1,36 +1,49 @@
-'use client';
+"use client";
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Equipamento } from '@/types/Equipamento';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { Equipamento } from "@/types/Equipamento";
+import { EquipamentosContextProps } from "@/types/EquipamentosContextProps";
+import { consultarEquipamento } from "@/services/equipamentosService";
+import { EquipamentosProviderProps } from "@/types/EquipamentosProviderProps";
 
-interface EquipamentosContextProps {
-  equipamentos: Equipamento[];
-  isLoading: boolean;
-  error: string | null;
-  setError: React.Dispatch<React.SetStateAction<string | null>>;
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  setEquipamentos: React.Dispatch<React.SetStateAction<Equipamento[]>>;
-}
+const EquipamentosContext = createContext<EquipamentosContextProps | undefined>(
+  undefined
+);
 
-interface EquipamentosProviderProps {
-  children: React.ReactNode;
-  initialEquipamentos: Equipamento[];
-}
-
-const EquipamentosContext = createContext<EquipamentosContextProps | undefined>(undefined);
-
-export const EquipamentosProvider: React.FC<EquipamentosProviderProps> = ({ children, initialEquipamentos }) => {
-  const [equipamentos, setEquipamentos] = useState<Equipamento[]>(initialEquipamentos);
+export const EquipamentosProvider = ({
+  children,
+}: EquipamentosProviderProps) => {
+  const [equipamentos, setEquipamentos] = useState<Equipamento[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchEquipamentos = async () => {
+    setIsLoading(true);
+    try {
+      const data = await consultarEquipamento();
+      setEquipamentos(data);
+    } catch (err) {
+      setError((err as Error).message || "Erro ao consultar equipamentos");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    setEquipamentos(initialEquipamentos);
-  }, [initialEquipamentos]);
+    fetchEquipamentos();
+  }, []);
 
   return (
     <EquipamentosContext.Provider
-      value={{ equipamentos, isLoading, error, setError, setIsLoading, setEquipamentos }}
+      value={{
+        equipamentos,
+        isLoading,
+        error,
+        setError,
+        setIsLoading,
+        setEquipamentos,
+        fetchEquipamentos,
+      }}
     >
       {children}
     </EquipamentosContext.Provider>
@@ -39,6 +52,9 @@ export const EquipamentosProvider: React.FC<EquipamentosProviderProps> = ({ chil
 
 export const useEquipamentosContext = () => {
   const context = useContext(EquipamentosContext);
-  if (!context) throw new Error('useEquipamentosContext deve ser usado dentro de EquipamentosProvider');
+  if (!context)
+    throw new Error(
+      "useEquipamentosContext deve ser usado dentro de EquipamentosProvider"
+    );
   return context;
 };
