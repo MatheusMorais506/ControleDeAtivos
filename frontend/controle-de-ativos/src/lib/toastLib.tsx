@@ -4,7 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const defaultOptions: ToastOptions = {
   position: "top-right",
-  autoClose: 4000,
+  autoClose: 2000,
   hideProgressBar: false,
   closeOnClick: true,
   pauseOnHover: true,
@@ -21,18 +21,18 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export const showSuccess = (message: string, options?: ToastOptions) => {
-  toast.success(message, { ...defaultOptions, ...options });
+export const mensagemDeSucesso = (mensagem: string, opcoes?: ToastOptions) => {
+  toast.success(mensagem, { ...defaultOptions, ...opcoes });
 };
 
-export const showError = (message: string, options?: ToastOptions) => {
-  toast.error(message, { ...defaultOptions, ...options });
+export const mensagemDeErro = (mensagem: string, opcoes?: ToastOptions) => {
+  toast.error(mensagem, { ...defaultOptions, ...opcoes });
 };
 
-export const showWarning = (message: string, options?: ToastOptions) => {
-  toast.warning(message, { ...defaultOptions, ...options });
+export const mensagemDeAviso = (mensagem: string, opcoes?: ToastOptions) => {
+  toast.warning(mensagem, { ...defaultOptions, ...opcoes });
 };
 
-export const showInfo = (message: string, options?: ToastOptions) => {
-  toast.info(message, { ...defaultOptions, ...options });
+export const mensagemDeInfo = (mensagem: string, opcoes?: ToastOptions) => {
+  toast.info(mensagem, { ...defaultOptions, ...opcoes });
 };
