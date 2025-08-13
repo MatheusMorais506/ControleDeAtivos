@@ -5,16 +5,16 @@ import {
   consultarEquipamento,
   registrarEquipamento,
   deletarEquipamento,
-  emprestarEquipamento,
   devolverEquipamento,
-  atualizarEquipamento
+  atualizarEquipamento,
+  emprestarEquipamento
 } from '@/services/equipamentosService';
 import { useCallback } from 'react';
 
 export function useEquipamentosActions() {
   const { setEquipamentos, setIsLoading, setError } = useEquipamentosContext();
 
-  const fetchEquipamentos = useCallback(async () => {
+  const ConsultarEquipamento = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
@@ -27,7 +27,7 @@ export function useEquipamentosActions() {
     }
   }, [setEquipamentos, setIsLoading, setError]);
 
-  const addEquipamento = useCallback(async (nome: string, codigoIdentificacao: string) => {
+  const AdicionarEquipamento = useCallback(async (nome: string, codigoIdentificacao: string) => {
     setIsLoading(true);
     setError(null);
     try {
@@ -41,22 +41,21 @@ export function useEquipamentosActions() {
     }
   }, [setEquipamentos, setIsLoading, setError]);
 
-  const emprestar = useCallback(async (id: string, note: string) => {
+  const EmprestarEquipamento = useCallback(async (id: string, note: string) => {
     setIsLoading(true);
     setError(null);
     try {
-      console.log('Emprestando equipamento:', id, note);
       const updated = await emprestarEquipamento(id, note);
       setEquipamentos(prev => prev.map(e => (e.id === id ? updated : e)));
     } catch (err) {
-      setError((err as Error).message || 'Erro ao emprestar equipamento');
+      setError((err as Error).message || 'Erro ao Emprestar equipamento');
       throw err;
     } finally {
       setIsLoading(false);
     }
   }, [setEquipamentos, setIsLoading, setError]);
 
-  const devolver = useCallback(async (id: string) => {
+  const DevolverEquipamento = useCallback(async (id: string) => {
     setIsLoading(true);
     setError(null);
     try {
@@ -70,7 +69,7 @@ export function useEquipamentosActions() {
     }
   }, [setEquipamentos, setIsLoading, setError]);
 
-  const removeEquipamento = useCallback(async (id: string) => {
+  const RemoveEquipamento = useCallback(async (id: string) => {
     setIsLoading(true);
     setError(null);
     try {
@@ -84,19 +83,27 @@ export function useEquipamentosActions() {
     }
   }, [setEquipamentos, setIsLoading, setError]);
 
-  const updateEquipamento = useCallback(async (id: string, nome: string, codigoIdentificacao: string) => {
+  const AtualizarEquipamento = useCallback(async (
+    id: string, nome: string, codigoIdentificacao: string, notaEmprestimo: string) => {
     setIsLoading(true);
     setError(null);
     try {
-      const updated = await atualizarEquipamento(id, nome, codigoIdentificacao);
+      const updated = await atualizarEquipamento(id, nome, codigoIdentificacao, notaEmprestimo);
       setEquipamentos(prev => prev.map(e => (e.id === id ? updated : e)));
     } catch (err) {
-      setError((err as Error).message || 'Erro ao emprestar equipamento');
+      setError((err as Error).message || 'Erro ao EmprestarEquipamento equipamento');
       throw err;
     } finally {
       setIsLoading(false);
     }
   }, [setEquipamentos, setIsLoading, setError]);
 
-  return { fetchEquipamentos, addEquipamento, emprestar, devolver, removeEquipamento, updateEquipamento };
+  return {
+    ConsultarEquipamento,
+    AdicionarEquipamento, 
+    EmprestarEquipamento,
+    DevolverEquipamento, 
+    RemoveEquipamento, 
+    AtualizarEquipamento
+  };
 }

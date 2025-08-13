@@ -1,67 +1,72 @@
 'use client';
 
 import { useUsuariosContext } from '@/context/UsuariosContext';
-import { registrarUsuario, atualizarUsuario, deletarUsuario, consultarUsuario } from '@/services/usuariosService';
-import { Usuario } from '@/types/Usuario';
+import {
+  registrarUsuario,
+  atualizarUsuario,
+  deletarUsuario,
+  consultarUsuario
+} from '@/services/usuariosService';
+import { UsuarioAcoes } from '@/types/UsuarioAcoes';
 import { useCallback } from 'react';
 
 export function useUsuariosActions() {
   const { setUsuarios, setIsLoading, setError } = useUsuariosContext();
 
-  const fetchUsuarios = useCallback(async () => {
+  const ConsultarUsuario = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
       const data = await consultarUsuario();
       setUsuarios(data);
     } catch (err) {
-      setError((err as Error).message || 'Erro ao buscar usuários');
+      setError((err as Error).message);
     } finally {
       setIsLoading(false);
     }
   }, [setUsuarios, setIsLoading, setError]);
 
-  const addUsuario = useCallback(async (usuario: Omit<Usuario, 'id'>) => {
+  const AdicionarUsuario = useCallback(async (usuario: Omit<UsuarioAcoes, 'id'>) => {
     setIsLoading(true);
     setError(null);
     try {
       const newUsuario = await registrarUsuario(usuario);
       setUsuarios(prev => [...prev, newUsuario]);
     } catch (err) {
-      setError((err as Error).message || 'Erro ao adicionar usuário');
+      setError((err as Error).message);
       throw err;
     } finally {
       setIsLoading(false);
     }
   }, [setUsuarios, setIsLoading, setError]);
 
-  const editUsuario = useCallback(async (id: number, usuario: Partial<Usuario>) => {
+  const AtualizarUsuario = useCallback(async (id: number, usuario: Partial<UsuarioAcoes>) => {
     setIsLoading(true);
     setError(null);
     try {
       const updatedUsuario = await atualizarUsuario(id, usuario);
       setUsuarios(prev => prev.map(u => (u.id === id ? updatedUsuario : u)));
     } catch (err) {
-      setError((err as Error).message || 'Erro ao editar usuário');
+      setError((err as Error).message);
       throw err;
     } finally {
       setIsLoading(false);
     }
   }, [setUsuarios, setIsLoading, setError]);
 
-  const removeUsuario = useCallback(async (id: number) => {
+  const RemoverUsuario = useCallback(async (id: number) => {
     setIsLoading(true);
     setError(null);
     try {
       await deletarUsuario(id);
       setUsuarios(prev => prev.filter(u => u.id !== id));
     } catch (err) {
-      setError((err as Error).message || 'Erro ao remover usuário');
+      setError((err as Error).message);
       throw err;
     } finally {
       setIsLoading(false);
     }
   }, [setUsuarios, setIsLoading, setError]);
 
-  return { fetchUsuarios, addUsuario, editUsuario, removeUsuario };
+  return { ConsultarUsuario, AdicionarUsuario, AtualizarUsuario, RemoverUsuario };
 }
