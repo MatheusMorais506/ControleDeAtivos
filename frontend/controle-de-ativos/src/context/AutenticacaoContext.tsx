@@ -1,7 +1,7 @@
 'use client';
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { loginService, LoginCredentials, User } from '@/services/autenticacaoService';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { fetchCurrentUser } from '@/services/autenticacaoService';
 import { routes } from '@/routes';
 
@@ -20,11 +20,16 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null | false>(null);
   const router = useRouter();
+  const pathname = usePathname();
 
 useEffect(() => {
+    if (pathname === '/login' || pathname === '/') {
+      setUser(false);
+      return;
+    }
+
     async function loadUser() {
       const currentUser = await fetchCurrentUser();
-       console.log('CurrentUser:', currentUser);
       if (currentUser) {
         setUser(currentUser);
       } else {
@@ -32,7 +37,7 @@ useEffect(() => {
       }
     }
     loadUser();
-  }, []);
+  }, [pathname]);
 
   const AutenticarUsuario = async (credentials: LoginCredentials) => {
     const loggedUser = await loginService(credentials);
