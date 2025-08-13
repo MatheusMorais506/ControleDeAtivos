@@ -21,8 +21,8 @@ namespace ControleDeAtivos.Application.UseCases.Usuarios
 
         public async Task Execute(RequestAtualizarUsuarioJson request)
         {
-            var usuario = await _repo.ObterPorIdAsync(request.Id) 
-                ?? throw new DomainException("Usuário não encontrado.");
+            var usuario = await _repo.ObterPorIdAsync(request.Id)
+                ?? throw new KeyNotFoundException("Usuário não encontrado");
 
             usuario.Atualizar(
                 request.Nome,
@@ -31,7 +31,7 @@ namespace ControleDeAtivos.Application.UseCases.Usuarios
                 request.Status,
                 request.Perfil
             );
-            
+
             await _repo.AtualizarAsync(usuario);
             await _repo.SalvarAsync();
         }

@@ -19,7 +19,6 @@ namespace ControleDeAtivos.Application.UseCases.Usuarios
         public async Task<List<ResponseConsultarUsuarioJson>> ExecuteAsync()
         {
             var usuarios = await _repo.ObterTodosAsync();
-
             return usuarios.Select(u => new ResponseConsultarUsuarioJson
             {
                 Id = u.Id,

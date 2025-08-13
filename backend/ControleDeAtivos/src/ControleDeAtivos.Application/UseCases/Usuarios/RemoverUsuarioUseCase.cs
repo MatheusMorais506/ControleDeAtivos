@@ -13,7 +13,9 @@ namespace ControleDeAtivos.Application.UseCases.Usuarios
 
         public async Task ExecuteAsync(int id)
         {
-            var usuario = await _repo.ObterPorIdAsync(id) ?? throw new DomainException("Usuário não encontrado.");
+            var usuario = await _repo.ObterPorIdAsync(id)
+                ?? throw new KeyNotFoundException("Usuário não encontrado");
+
             await _repo.RemoverAsync(usuario);
             await _repo.SalvarAsync();
         }

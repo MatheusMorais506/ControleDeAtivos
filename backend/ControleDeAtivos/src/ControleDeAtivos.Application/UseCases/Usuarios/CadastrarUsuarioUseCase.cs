@@ -15,6 +15,9 @@ namespace ControleDeAtivos.Application.UseCases.Usuarios
 
         public async Task<ResponseCadastrarUsuarioJson> ExecuteAsync(RequestCadastrarUsuarioJson dto)
         {
+            if (string.IsNullOrWhiteSpace(dto.Login) || string.IsNullOrWhiteSpace(dto.Senha))
+                throw new ArgumentException("Login e senha são obrigatórios");
+
             var usuario = new Usuario(
                 dto.Login,
                 dto.Nome,
