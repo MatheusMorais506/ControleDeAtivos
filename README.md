@@ -40,7 +40,7 @@ Antes de executar o projeto, instale:
    git clone https://github.com/seu-usuario/seu-repo.git
    cd seu-repo
 
-2. Execute o Docker Compose para construir e subir os containers:
+2. Abra o cmd/gitbash na pasta raiz do projeto(ControleDeAtivos) e execute o Docker Compose para construir e subir os containers:
    ```
    docker-compose up --build
 
