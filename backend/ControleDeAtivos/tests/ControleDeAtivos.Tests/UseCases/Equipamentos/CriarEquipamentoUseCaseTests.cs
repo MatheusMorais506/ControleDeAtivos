@@ -25,7 +25,7 @@ public class CriarEquipamentoUseCaseTests
     }
 
     [Fact]
-    public async Task Executar_ComDadosValidos_DeveCriarERetornarIdDoEquipamento()
+    public async Task CadastrarAsync_ComDadosValidos_DeveCriarERetornarEquipamento()
     {
         var request = _requestFaker.Generate();
 
@@ -34,14 +34,22 @@ public class CriarEquipamentoUseCaseTests
             .ReturnsAsync(false);
 
         _equipamentoRepositoryMock
-            .Setup(r => r.AdicionarAsync(It.IsAny<Equipamento>()));
+            .Setup(r => r.AdicionarAsync(It.IsAny<Equipamento>()))
+            .Callback<Equipamento>(e => e.GetType().GetProperty("Id")!
+            .SetValue(e, 1));
+
         _equipamentoRepositoryMock
             .Setup(r => r.SalvarAsync())
             .Returns(Task.CompletedTask);
 
-        var resultadoId = await _useCase.CadastrarAsync(request.Nome, request.CodigoIdentificacao);
+        var resultado = await _useCase.CadastrarAsync(request.Nome, request.CodigoIdentificacao);
 
-        resultadoId.Should().NotBe(0);
+        resultado.Should().NotBeNull();
+        resultado.Nome.Should().Be(request.Nome);
+        resultado.CodigoIdentificacao.Should().Be(request.CodigoIdentificacao);
+        resultado.Id.Should().BeGreaterThan(0);
+        resultado.Status.Should().BeFalse();
+        resultado.NotaEmprestimo.Should().BeNull();
 
         _equipamentoRepositoryMock.Verify(r =>
             r.AdicionarAsync(It.Is<Equipamento>(e =>
@@ -53,7 +61,7 @@ public class CriarEquipamentoUseCaseTests
     }
 
     [Fact]
-    public async Task Executar_ComCodigoDeIdentificacaoJaExistente_DeveLancarDomainException()
+    public async Task CadastrarAsync_ComCodigoDeIdentificacaoExistente_DeveLancarDomainException()
     {
         var request = _requestFaker.Generate();
 
@@ -61,9 +69,25 @@ public class CriarEquipamentoUseCaseTests
             .Setup(r => r.CodigoIdentificacaoJaExisteAsync(request.CodigoIdentificacao))
             .ReturnsAsync(true);
 
-        await Assert.ThrowsAsync<DomainException>(() => _useCase.CadastrarAsync(request.Nome, request.CodigoIdentificacao));
+        await Assert.ThrowsAsync<DomainException>(() =>
+            _useCase.CadastrarAsync(request.Nome, request.CodigoIdentificacao));
+
+        _equipamentoRepositoryMock.Verify(r => r.AdicionarAsync(It.IsAny<Equipamento>()), Times.Never);
+        _equipamentoRepositoryMock.Verify(r => r.SalvarAsync(), Times.Never);
+    }
+
+    [Theory]
+    [InlineData(null, "COD123")]
+    [InlineData("", "COD123")]
+    [InlineData("Nome", null)]
+    [InlineData("Nome", "")]
+    public async Task CadastrarAsync_ComNomeOuCodigoInvalidos_DeveLancarArgumentException(string nome, string codigo)
+    {
+        await Assert.ThrowsAsync<ArgumentException>(() =>
+            _useCase.CadastrarAsync(nome, codigo));
 
         _equipamentoRepositoryMock.Verify(r => r.AdicionarAsync(It.IsAny<Equipamento>()), Times.Never);
         _equipamentoRepositoryMock.Verify(r => r.SalvarAsync(), Times.Never);
     }
 }
+
