@@ -1,18 +1,19 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
-import { AuthProvider } from '@/context/AutenticacaoContext';
+import { AutenticacaoProvider } from '@/context/AutenticacaoContext';
 import './globals.css';
 import { ToastProvider } from '@/lib/toastLib';
 import clsx from 'clsx';
 import { setCurrentPath } from '@/lib/api';
 import { setNavegacao } from '@/lib/navegacao';
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function ComponentsLayout({ children }: { children: ReactNode }) {
+
   const [isExpanded, setIsExpanded] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
@@ -26,7 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="pt-br">
       <body className="flex bg-gray-50 min-h-screen">
-        <AuthProvider>
+        <AutenticacaoProvider>
           {!isLoginPage && <Sidebar isExpanded={isExpanded} />}
 
           <div
@@ -43,7 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </main>
             <Footer />
           </div>
-        </AuthProvider>
+        </AutenticacaoProvider>
       </body>
     </html>
   );
