@@ -48,3 +48,4 @@ Antes de executar o projeto, instale:
    ```
    Backend: http://localhost:5000
    Frontend: http://localhost:3000
+   Usuario de teste: admin / Senha: admin10
