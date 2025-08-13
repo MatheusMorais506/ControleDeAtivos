@@ -18,12 +18,12 @@ namespace ControleDeAtivos.Application.UseCases.Autenticacao
             _autenticacaoRepo = autenticacaoRepo;
         }
 
-        public async Task ExecuteAsync(RequestRefreshTokenJson request)
+        public async Task ExecuteAsync(string request)
         {
-            if (string.IsNullOrWhiteSpace(request.RefreshToken))
+            if (string.IsNullOrWhiteSpace(request))
                 throw new ArgumentException("Refresh token é obrigatório");
 
-            var token = await _autenticacaoRepo.ObterRefreshTokenAsync(request.RefreshToken);
+            var token = await _autenticacaoRepo.ObterRefreshTokenAsync(request);
             if (token == null)
                 throw new KeyNotFoundException("Refresh token não encontrado");
 

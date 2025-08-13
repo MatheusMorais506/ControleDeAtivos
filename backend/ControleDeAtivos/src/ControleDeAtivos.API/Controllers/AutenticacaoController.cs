@@ -28,7 +28,7 @@ namespace ControleDeAtivos.Api.Controllers
             {
                 HttpOnly = true,
                 Secure = true,             
-                SameSite = SameSiteMode.None, //Strict
+                SameSite = SameSiteMode.None,
                 Expires = result.ExpiraEm
             });
 
@@ -37,7 +37,7 @@ namespace ControleDeAtivos.Api.Controllers
             {
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.None, //Strict
+                SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddDays(7)
             });
 
@@ -50,12 +50,11 @@ namespace ControleDeAtivos.Api.Controllers
         [HttpPost("refresh")]
         [ProducesResponseType(typeof(ResponseLoginJson), StatusCodes.Status200OK)]
         public async Task<IActionResult> Refresh(
-            [FromServices] IRefreshService service,
-            [FromBody] RequestRefreshTokenJson request)
+            [FromServices] IRefreshService service)
         {
             var refreshToken = Request.Cookies["refresh_token"];
             if (string.IsNullOrEmpty(refreshToken))
-                return Unauthorized(new { message = "Refresh token não encontrado" });
+                throw new UnauthorizedAccessException("Refresh token não encontrado");
 
             var result = await service.ExecuteAsync(refreshToken);
 
@@ -63,7 +62,7 @@ namespace ControleDeAtivos.Api.Controllers
             {
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.None,//Strict
+                SameSite = SameSiteMode.None,
                 Expires = result.ExpiraEm
             });
 
@@ -71,7 +70,7 @@ namespace ControleDeAtivos.Api.Controllers
             {
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.None,//Strict
+                SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddDays(7)
             });
 
@@ -82,12 +81,16 @@ namespace ControleDeAtivos.Api.Controllers
         [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> Logout(
-            [FromServices] ILogoutService service,
-            [FromBody] RequestRefreshTokenJson request)
+            [FromServices] ILogoutService service)
         {
-            await service.ExecuteAsync(request);
+            var refreshToken = Request.Cookies["refresh_token"];
+            if (!string.IsNullOrEmpty(refreshToken))
+            {
+                await service.ExecuteAsync(refreshToken);
+            }
 
             Response.Cookies.Delete("access_token");
+            Response.Cookies.Delete("refresh_token");
 
             return NoContent();
         }
@@ -107,7 +110,7 @@ namespace ControleDeAtivos.Api.Controllers
             var dataCadastroClaim = User.FindFirst("DataCadastro");
 
             if (idClaim == null)
-                return Unauthorized();
+                throw new UnauthorizedAccessException("Usuário não autenticado");
 
             var user = new ResponseConsultarUsuarioJson
             {
