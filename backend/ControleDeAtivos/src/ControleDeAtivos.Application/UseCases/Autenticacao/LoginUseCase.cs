@@ -4,6 +4,7 @@ using ControleDeAtivos.Application.Requests.Login;
 using ControleDeAtivos.Application.Responses.Login;
 using ControleDeAtivos.Application.Responses.Usuario;
 using ControleDeAtivos.Domain.Entities;
+using ControleDeAtivos.Domain.Enums;
 using ControleDeAtivos.Domain.Repositories;
 
 namespace ControleDeAtivos.Application.UseCases.Autenticacao
@@ -24,7 +25,9 @@ namespace ControleDeAtivos.Application.UseCases.Autenticacao
             if (string.IsNullOrWhiteSpace(request.Login) || string.IsNullOrWhiteSpace(request.Senha))
                 throw new ArgumentException("Login e senha são obrigatórios");
 
-            var usuario = await _autenticacaoRepo.ValidarCredenciaisAsync(request.Login)
+            var statusInativo = (int)StatusUsuario.Inativo;
+
+            var usuario = await _autenticacaoRepo.ValidarCredenciaisAsync(request.Login, statusInativo)
                 ?? throw new UnauthorizedAccessException("Usuário inválido");
 
             bool senhaValida = BCrypt.Net.BCrypt.Verify(request.Senha, usuario.Senha);
