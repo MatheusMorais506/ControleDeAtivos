@@ -8,7 +8,7 @@ namespace ControleDeAtivos.Application.Requests.Usuario
         public string Nome { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string Senha { get; set; } = string.Empty;
-        public int Status { get; set; }
-        public int Perfil { get; set; }
+        public int StatusId { get; set; }
+        public int PerfilId { get; set; }
     }
 }

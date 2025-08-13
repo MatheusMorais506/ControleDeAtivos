@@ -19,8 +19,8 @@ namespace ControleDeAtivos.Application.services.Usuarios
                 dto.Login,
                 dto.Nome,
                 dto.Email,
-                dto.Status,
-                dto.Perfil
+                dto.StatusId,
+                dto.PerfilId
             );
 
             usuario.DefinirSenha(dto.Senha);
@@ -34,8 +34,10 @@ namespace ControleDeAtivos.Application.services.Usuarios
                 Login = usuario.Login,
                 Nome = usuario.Nome,
                 Email = usuario.Email,
-                Perfil = usuario.Perfil,
-                Status = usuario.Status,
+                Perfil = "",
+                PerfilId = usuario.PerfilId.ToString(),
+                Status = "",
+                StatusId = usuario.StatusId.ToString(),
                 DataCadastro = usuario.DataCadastro
             };
         }

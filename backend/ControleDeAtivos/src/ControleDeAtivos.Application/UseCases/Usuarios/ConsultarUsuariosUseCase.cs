@@ -27,7 +27,9 @@ namespace ControleDeAtivos.Application.services.Usuarios
                 Nome = u.Nome,
                 Email = u.Email,
                 Perfil = u.Perfil.Descricao,
+                PerfilId = u.Perfil.Id.ToString(),
                 Status = u.Status.Descricao,
+                StatusId = u.Status.Id.ToString(),
                 DataCadastro = u.DataCadastro.ToString()
             }).ToList();
         }
