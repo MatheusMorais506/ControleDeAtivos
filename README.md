@@ -2,8 +2,7 @@
 
 ## Descrição do Projeto
 
-O **Controle de Ativos** é uma ferramenta interna desenvolvida para pequenos escritórios gerenciarem seus equipamentos compartilhados, como monitores, teclados e projetores.  
-O sistema substitui planilhas confusas, permitindo rastrear facilmente o status dos ativos e reduzir perdas.
+O **Controle de Ativos** é uma ferramenta desenvolvida para gerenciar equipamentos compartilhados, como monitores, teclados e projetores.
 
 ### Funcionalidades Principais
 1. **Cadastrar um Ativo**: Registrar novos equipamentos com nome e código de identificação.
@@ -19,14 +18,15 @@ O sistema substitui planilhas confusas, permitindo rastrear facilmente o status 
 - **Containerização:** Docker & Docker Compose
 
 ## Estrutura do Projeto
-├─ src/
-│ ├─ ControleDeAtivos.Api/ # Backend (API ASP.NET Core)
-│ ├─ ControleDeAtivos.Application/ # Camada de aplicação: serviços, casos de uso
-│ ├─ ControleDeAtivos.Domain/ # Camada de domínio: entidades, regras de negócio
-│ ├─ ControleDeAtivos.Infrastructure/ # Persistência, migrations, contexto EF
-│ └─ frontend/ # Frontend React/Next.js
-├─ docker-compose.yml
-└─ README.md
+| Pasta / Arquivo                      | Descrição                                      |
+|-------------------------------------|------------------------------------------------|
+| src/ControleDeAtivos.Api/            | Backend (API ASP.NET Core)                     |
+| src/ControleDeAtivos.Application/    | Camada de aplicação: serviços, casos de uso, DTOs |
+| src/ControleDeAtivos.Domain/         | Camada de domínio: entidades e regras de negócio |
+| src/ControleDeAtivos.Infrastructure/ | Persistência, migrations, contexto EF         |
+| src/frontend/                        | Frontend React/Next.js                         |
+| docker-compose.yml                   | Configuração de containers Docker             |
+| README.md                            | Documentação do projeto                        |
 
 
 ## Pré-requisitos
@@ -41,8 +41,10 @@ Antes de executar o projeto, instale:
    cd seu-repo
 
 2. Execute o Docker Compose para construir e subir os containers:
+   ```
    docker-compose up --build
 
 3. Acesse a aplicação:
+   ```
    Backend: http://localhost:5000
    Frontend: http://localhost:3000
