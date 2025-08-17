@@ -1,36 +1,47 @@
-'use client';
+"use client";
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Usuario } from '@/types/Usuario';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { UsuarioAcoes } from "@/types/UsuarioAcoes";
+import { UsuariosContextProps } from "@/types/UsuariosContextProps";
+import { consultarUsuario } from "@/services/usuariosService";
+import { UsuariosProviderProps } from "@/types/UsuariosProviderProps";
 
-interface UsuariosContextProps {
-  usuarios: Usuario[];
-  isLoading: boolean;
-  error: string | null;
-  setError: React.Dispatch<React.SetStateAction<string | null>>;
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  setUsuarios: React.Dispatch<React.SetStateAction<Usuario[]>>;
-}
+const UsuariosContext = createContext<UsuariosContextProps | undefined>(
+  undefined
+);
 
-interface UsuariosProviderProps {
-  children: React.ReactNode;
-  initialUsers: Usuario[];
-}
-
-const UsuariosContext = createContext<UsuariosContextProps | undefined>(undefined);
-
-export const UsuariosProvider: React.FC<UsuariosProviderProps> = ({ children, initialUsers }) => {
-  const [usuarios, setUsuarios] = useState<Usuario[]>(initialUsers);
+export const UsuariosProvider = ({ children }: UsuariosProviderProps) => {
+  const [usuarios, setUsuarios] = useState<UsuarioAcoes[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchUsuarios = async () => {
+    setIsLoading(true);
+    try {
+      const data = await consultarUsuario();
+      setUsuarios(data);
+    } catch (err) {
+      setError((err as Error).message || "Erro ao consultar usuários");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    setUsuarios(initialUsers);
-  }, [initialUsers]);
+    fetchUsuarios();
+  }, []);
 
   return (
     <UsuariosContext.Provider
-      value={{ usuarios, isLoading, error, setError, setIsLoading, setUsuarios }}
+      value={{
+        usuarios,
+        isLoading,
+        error,
+        setError,
+        setIsLoading,
+        setUsuarios,
+        fetchUsuarios,
+      }}
     >
       {children}
     </UsuariosContext.Provider>
@@ -39,6 +50,9 @@ export const UsuariosProvider: React.FC<UsuariosProviderProps> = ({ children, in
 
 export const useUsuariosContext = () => {
   const context = useContext(UsuariosContext);
-  if (!context) throw new Error('useUsuariosContext deve ser usado dentro de UsuariosProvider');
+  if (!context)
+    throw new Error(
+      "useUsuariosContext deve ser usado dentro de UsuariosProvider"
+    );
   return context;
 };

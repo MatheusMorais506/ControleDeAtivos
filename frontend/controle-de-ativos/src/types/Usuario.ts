@@ -1,10 +1,11 @@
 export interface Usuario {
   id: number;
-  login: string;
   nome: string;
   email: string;
-  senha: string;
-  statusId: string;
+  dataCadastro: string;
+  login: string;
+  perfil: string;
   perfilId: string;
-  acoes?: string[];
+  status: string;
+  statusId: string;
 }

@@ -9,7 +9,7 @@ namespace ControleDeAtivos.Domain.Repositories
 {
     public interface IAutenticacaoRepository
     {
-        Task<Usuario?> ValidarCredenciaisAsync(string login);
+        Task<Usuario?> ValidarCredenciaisAsync(string login, int statusId);
         Task<Usuario?> ObterUsuarioPorIdAsync(int usuarioId);
 
         Task AdicionarRefreshTokenAsync(RefreshToken token);

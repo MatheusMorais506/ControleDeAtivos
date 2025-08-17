@@ -1,13 +1,7 @@
 'use client';
 import { FaEdit, FaExchangeAlt, FaTrash, FaUndo } from 'react-icons/fa';
 import styles from './ActionButtons.module.css';
-
-interface ActionButtonsProps {
-  onEdit?: () => void;
-  onDelete?: () => void;
-  onEmprestar?: () => void;
-  onDevolver?: () => void;
-}
+import { ActionButtonsProps } from '../../types/ActionButtonsProps';
 
 export function ActionButtons({ onEdit, onDelete, onEmprestar, onDevolver }: ActionButtonsProps) {
   return (

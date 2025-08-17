@@ -11,17 +11,20 @@ namespace ControleDeAtivos.Infrastructure.Repositories
 
         public AutenticacaoRepository(AppDbContext context) => _context = context;
 
-        public async Task<Usuario?> ValidarCredenciaisAsync(string login)
+        public async Task<Usuario?> ValidarCredenciaisAsync(string login, int statusId)
         {
             return await _context.Usuarios
                 .Include(u => u.Status)
                 .Include(u => u.Perfil)
-                .FirstOrDefaultAsync(u => u.Login == login);
+                .FirstOrDefaultAsync(u => u.Login == login && u.StatusId != statusId);
         }
 
         public async Task<Usuario?> ObterUsuarioPorIdAsync(int usuarioId)
         {
-            return await _context.Usuarios.FindAsync(usuarioId);
+            return await _context.Usuarios
+                .Include(u => u.Status)
+                .Include(u => u.Perfil)
+                .FirstOrDefaultAsync(u => u.Id == usuarioId);
         }
 
         public async Task AdicionarRefreshTokenAsync(RefreshToken token)

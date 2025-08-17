@@ -47,9 +47,10 @@ export async function deletarEquipamento(id: string): Promise<void> {
   }
 }
 
-export async function atualizarEquipamento(id: string, nome: string, codigoIdentificacao: string): Promise<Equipamento> {
+export async function atualizarEquipamento(
+  id: string, nome: string, codigoIdentificacao: string, notaEmprestimo: string): Promise<Equipamento> {
   try {
-    const res = await api.put(`${API_URL}/${id}/atualizar`, { nome, codigoIdentificacao });
+    const res = await api.put(`${API_URL}/${id}/atualizar`, { nome, codigoIdentificacao, notaEmprestimo });
     return res.data;
   } catch (error) {
     throw new Error('Erro ao atualizar ativo');

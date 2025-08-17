@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { EquipamentosTable } from './EquipamentosTable';
+import { EquipamentosTable } from "./EquipamentosTable";
 
 export default function EquipamentosClient() {
   return <EquipamentosTable />;

@@ -11,6 +11,7 @@ namespace ControleDeAtivos.Domain.Repositories
     {
         Task<List<Usuario>> ObterTodosAsync();
         Task<Usuario> ObterPorIdAsync(int id);
+        Task<Usuario> ObterPorLoginAsync(string login);
         Task AdicionarAsync(Usuario usuario);
         Task RemoverAsync(Usuario usuario);
         Task AtualizarAsync(Usuario usuario);

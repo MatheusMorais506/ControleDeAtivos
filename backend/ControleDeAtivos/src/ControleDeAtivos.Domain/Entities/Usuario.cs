@@ -46,6 +46,12 @@
             PerfilId = perfilId;
         }
 
+        public void AtualizarStatus(
+            int statusId)
+        {
+            StatusId = statusId;
+        }
+
         public void DefinirSenha(string senha)
         {
             if (string.IsNullOrWhiteSpace(senha) || senha.Length < 6)

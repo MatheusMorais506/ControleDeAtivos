@@ -1,64 +1,85 @@
-'use client';
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { loginService, LoginCredentials, User } from '@/services/autenticacaoService';
-import { usePathname, useRouter } from 'next/navigation';
-import { fetchCurrentUser } from '@/services/autenticacaoService';
-import { routes } from '@/routes';
+"use client";
 
-interface AuthContextType {
-  user: User | null | false;
-  AutenticarUsuario: (credentials: LoginCredentials) => Promise<void>;
-  logout: () => void;
-}
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
+import { loginService, logoutService } from "@/services/autenticacaoService";
+import { usePathname, useRouter } from "next/navigation";
+import { fetchCurrentUser } from "@/services/autenticacaoService";
+import { routes } from "@/routes";
+import { AuthContextType } from "@/types/AuthContextType";
+import { AuthProviderProps } from "@/types/AuthProviderProps";
+import { Usuario } from "@/types/Usuario";
+import { LoginCredentials } from "@/types/LoginCredentials";
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
+const AutenticacaoContext = createContext<AuthContextType | undefined>(
+  undefined
+);
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<User | null | false>(null);
+export function AutenticacaoProvider({ children }: AuthProviderProps) {
+  const [user, setUser] = useState<Usuario | null | false>(null);
+  const [sessionActive, setSessionActive] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
-useEffect(() => {
-    if (pathname === '/login' || pathname === '/') {
-      setUser(false);
+  useEffect(() => {
+    if (pathname === "/logout") {
+      logout();
       return;
     }
 
-    async function loadUser() {
-      const currentUser = await fetchCurrentUser();
-      if (currentUser) {
-        setUser(currentUser);
-      } else {
-        setUser(false);
-      }
+    if (pathname === "/login" || pathname === "/") {
+      setUser(false);
+      setSessionActive(false);
+      return;
     }
-    loadUser();
+
+    if (!sessionActive && user !== false) {
+      const loadUser = async () => {
+        const currentUser = await fetchCurrentUser();
+        if (currentUser) {
+          setUser(currentUser);
+          setSessionActive(true);
+        } else {
+          setUser(false);
+        }
+      };
+      loadUser();
+    }
   }, [pathname]);
 
   const AutenticarUsuario = async (credentials: LoginCredentials) => {
     const loggedUser = await loginService(credentials);
     setUser(loggedUser);
+    setSessionActive(true);
     router.push(routes.equipamentos);
   };
 
-  const logout = () => {
-    setUser(null);
-    router.push(routes.login);
+  const logout = async () => {
+    try {
+      await logoutService();
+    } catch (err) {
+    } finally {
+      setUser(false);
+      setSessionActive(false);
+      router.push(routes.login);
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, AutenticarUsuario, logout }}>
+    <AutenticacaoContext.Provider value={{ user, AutenticarUsuario, logout }}>
       {children}
-    </AuthContext.Provider>
+    </AutenticacaoContext.Provider>
   );
 }
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth deve ser usado dentro de AuthProvider');
+  const context = useContext(AutenticacaoContext);
+  if (!context)
+    throw new Error("useAuth deve ser usado dentro de AuthProvider");
   return context;
 };

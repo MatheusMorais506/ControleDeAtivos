@@ -1,62 +1,72 @@
-'use client';
-import React, { useState, useEffect } from 'react';
-import { DataTable } from '@/components/common/DataTable';
-import { FormModal } from '@/components/common/FormModal';
-import { ActionButtons } from '@/components/common/ActionButtons';
-import { useUsuariosContext } from '@/context/UsuariosContext';
-import { useUsuariosActions } from '@/hooks/useUsuariosActions';
-import { Column } from '@/types/Column';
-import { Usuario } from '@/types/Usuario';
-import Swal from 'sweetalert2';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { validateUsuarioForm } from '@/utils/validateUsuarioForm';
-import { showError, showSuccess } from '@/lib/toastLib';
+"use client";
+import React, { useState, useEffect } from "react";
+import { DataTable } from "@/components/common/DataTable";
+import { FormModal } from "@/components/common/FormModal";
+import { useUsuariosContext } from "@/context/UsuariosContext";
+import { useUsuariosActions } from "@/hooks/useUsuariosActions";
+import { Column } from "@/types/Column";
+import { UsuarioAcoes } from "@/types/UsuarioAcoes";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { validateUsuarioForm } from "@/utils/validateUsuarioForm";
+import { mensagemDeErro, mensagemDeSucesso } from "@/lib/toastLib";
+import { UsuarioStatus } from "@/types/UsuarioStatus";
+import { UsuarioPerfil } from "@/types/UsuarioPerfil";
+import { usePopupConfirmacaoActions } from "@/hooks/usePopupConfirmacaoActions";
+import { DropdownActions } from "@/components/common/DropdownActions";
 
-export const UsuarioTable: React.FC = () => {
+export function UsuarioTable() {
   const { usuarios } = useUsuariosContext();
-  const { addUsuario, editUsuario, removeUsuario, fetchUsuarios } = useUsuariosActions();
+  const {
+    AdicionarUsuario,
+    AtualizarUsuario,
+    RemoverUsuario,
+    ConsultarUsuario,
+  } = useUsuariosActions();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingUsuario, setEditingUsuario] = useState<Usuario | null>(null);
+  const [editingUsuario, setEditingUsuario] = useState<UsuarioAcoes | null>(
+    null
+  );
   const [actionError, setActionError] = useState<string | null>(null);
   const [dropdownAbertoId, setDropdownAbertoId] = useState<number | null>(null);
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+  const { ConfirmarAcao } = usePopupConfirmacaoActions();
 
-  const [formLogin, setFormLogin] = useState('');
-  const [formNome, setFormNome] = useState('');
-  const [formEmail, setFormEmail] = useState('');
-  const [formSenha, setFormSenha] = useState('');
+  const [formLogin, setFormLogin] = useState("");
+  const [formNome, setFormNome] = useState("");
+  const [formEmail, setFormEmail] = useState("");
+  const [formSenha, setFormSenha] = useState("");
   const [formStatus, setFormStatus] = useState(1);
   const [formPerfil, setFormPerfil] = useState(0);
   const [mostrarSenha, setMostrarSenha] = useState(false);
 
-  useEffect(() => { fetchUsuarios(); }, [fetchUsuarios]);
-
   useEffect(() => {
-  const handleClickOutside = (event: MouseEvent) => {
-    const target = event.target as HTMLElement;
-    if (!target.closest(".dropdown-menu") && !target.closest(".dropdown-button")) {
-      setDropdownAbertoId(null);
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (
+        !target.closest(".dropdown-menu") &&
+        !target.closest(".dropdown-button")
+      ) {
+        setDropdownAbertoId(null);
+      }
+    };
+
+    if (dropdownAbertoId !== null) {
+      document.addEventListener("click", handleClickOutside);
+    } else {
+      document.removeEventListener("click", handleClickOutside);
     }
-  };
 
-  if (dropdownAbertoId !== null) {
-    document.addEventListener("click", handleClickOutside);
-  } else {
-    document.removeEventListener("click", handleClickOutside);
-  }
-
-  return () => {
-    document.removeEventListener("click", handleClickOutside);
-  };
-}, [dropdownAbertoId]);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [dropdownAbertoId]);
 
   const openAddModal = () => {
     setEditingUsuario(null);
-    setFormLogin('');
-    setFormNome('');
-    setFormEmail('');
-    setFormSenha('');
+    setFormLogin("");
+    setFormNome("");
+    setFormEmail("");
+    setFormSenha("");
     setFormStatus(1);
     setFormPerfil(1);
     setActionError(null);
@@ -77,7 +87,7 @@ export const UsuarioTable: React.FC = () => {
       nome: formNome,
       email: formEmail,
       senha: formSenha,
-      editingUsuario: !!editingUsuario
+      editingUsuario: !!editingUsuario,
     });
 
     if (Object.keys(errors).length > 0) {
@@ -85,131 +95,99 @@ export const UsuarioTable: React.FC = () => {
       return;
     }
 
-    const usuarioData: Omit<Usuario, 'id'> = {
+    const usuarioData: Omit<UsuarioAcoes, "id"> = {
       login: formLogin.trim(),
       nome: formNome.trim(),
       email: formEmail.trim(),
       senha: formSenha,
       statusId: formStatus.toString(),
-      perfilId: formPerfil.toString()
+      perfilId: formPerfil.toString(),
     };
 
     try {
       if (editingUsuario) {
-        await editUsuario(editingUsuario.id, usuarioData);
-        showSuccess('Usuário atualizado com sucesso!');
+        await AtualizarUsuario(editingUsuario.id, usuarioData);
+        await ConsultarUsuario();
+        mensagemDeSucesso("Usuário atualizado com sucesso!");
       } else {
-        await addUsuario(usuarioData);
-        showSuccess('Usuário adicionado com sucesso!');
+        await AdicionarUsuario(usuarioData);
+        await ConsultarUsuario();
+        mensagemDeSucesso("Usuário adicionado com sucesso!");
       }
       closeModal();
     } catch (err) {
-      setActionError((err as Error).message || 'Erro desconhecido');
-      showError("Processo não realizado!");
+      setActionError((err as Error).message.toString() || "Erro desconhecido");
+      mensagemDeErro(
+        String((err as Error).message || "Processo não realizado!")
+      );
     }
   };
 
   const onDelete = async (id: number) => {
-    const result = await Swal.fire({
-      title: 'Tem certeza?',
-      text: 'Você não poderá reverter esta ação!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#0F766EFF',
-      cancelButtonColor: '#DC2626FF',
-      confirmButtonText: 'Sim',
-      cancelButtonText: 'Não'
+    const result = await ConfirmarAcao({
+      text: "Você não poderá reverter esta ação!",
     });
 
     if (result.isConfirmed) {
       try {
-        await removeUsuario(id);
+        await RemoverUsuario(id);
         setDropdownAbertoId(null);
-        showSuccess('Usuário removido com sucesso!');
+        mensagemDeSucesso("Usuário removido com sucesso!");
       } catch (err) {
-        showError((err as Error).message || 'Erro ao remover usuário');
+        setActionError(
+          (err as Error).message.toString() || "Erro desconhecido"
+        );
+        mensagemDeErro(
+          String((err as Error).message || "Processo não realizado!")
+        );
       }
     }
   };
 
-const handleToggleDropdown = (e: React.MouseEvent, id: number) => {
-  e.stopPropagation();
-  if (dropdownAbertoId === id) {
-    setDropdownAbertoId(null);
-  } else {
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-    setDropdownPosition({
-      top: rect.bottom + window.scrollY,
-      left: rect.left + window.scrollX
-    });
-    setDropdownAbertoId(id);
-  }
-};
-
-  const columns: Column<Usuario>[] = [
-    { key: 'login', label: 'Login' },
-    { key: 'nome', label: 'Nome' },
-    { key: 'email', label: 'Email' },
+  const columns: Column<UsuarioAcoes>[] = [
+    { key: "login", label: "Login" },
+    { key: "nome", label: "Nome" },
+    { key: "email", label: "Email" },
     {
-      key: 'statusId',
-      label: 'Status',
-      render: u => parseInt(u.statusId) === 1
-        ? <span className="text-green-600 font-semibold">Ativo</span>
-        : <span className="text-orange-600 font-semibold">Inativo</span>
+      key: "statusId",
+      label: "Status",
+      render: (u) =>
+        parseInt(u.statusId) === UsuarioStatus.Ativo ? (
+          <span className="text-green-600 font-semibold">Ativo</span>
+        ) : (
+          <span className="text-orange-600 font-semibold">Inativo</span>
+        ),
     },
     {
-      key: 'perfilId',
-      label: 'Perfil',
-      render: u => parseInt(u.perfilId) === 1
-        ? <span className="text-green-600 font-semibold">Administrador</span>
-        : <span className="text-orange-600 font-semibold">Básico</span>
+      key: "perfilId",
+      label: "Perfil",
+      render: (u) =>
+        parseInt(u.perfilId) === UsuarioPerfil.Administrador ? (
+          <span className="text-green-600 font-semibold">Administrador</span>
+        ) : (
+          <span className="text-orange-600 font-semibold">Básico</span>
+        ),
     },
     {
-      key: 'acoes',
-      label: 'Ações',
-      render: u => (
-        <div className="relative inline-block text-left">
-          <button
-            onClick={(e) => handleToggleDropdown(e, u.id)}
-            className="inline-flex items-center gap-1 bg-teal-200 text-teal-800 text-sm font-semibold px-3 py-1 rounded cursor-pointer hover:bg-teal-300 focus:outline-none focus:ring-2 focus:ring-teal-400"
-          >
-            Ações
-            <svg
-              className={`w-4 h-4 transition-transform duration-200 ${dropdownAbertoId === u.id ? 'rotate-180' : ''}`}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-
-          {dropdownAbertoId === u.id && (
-          <div className="fixed z-50 bg-white border border-gray-300 rounded shadow-lg"
-            style={{
-              top: dropdownPosition.top,
-              left: dropdownPosition.left
-            }}>
-              <ActionButtons
-                onEdit={() => {
-                  setEditingUsuario(u);
-                  setFormLogin(u.login);
-                  setFormNome(u.nome);
-                  setFormEmail(u.email);
-                  setFormSenha('');
-                  setFormStatus(parseInt(u.statusId));
-                  setFormPerfil(parseInt(u.perfilId));
-                  setIsModalOpen(true);
-                  setDropdownAbertoId(null);
-                }}
-                onDelete={() => onDelete(u.id)}
-              />
-            </div>
-          )}
-        </div>
+      key: "acoes",
+      label: "Ações",
+      render: (u) => (
+        <DropdownActions
+          item={u}
+          onEdit={(user) => {
+            setEditingUsuario(user);
+            setFormLogin(user.login);
+            setFormNome(user.nome);
+            setFormEmail(user.email);
+            setFormSenha("");
+            setFormStatus(parseInt(user.statusId));
+            setFormPerfil(parseInt(user.perfilId));
+            setIsModalOpen(true);
+          }}
+          onDelete={(user) => onDelete(user.id)}
+        />
       ),
-    }
+    },
   ];
 
   return (
@@ -224,51 +202,60 @@ const handleToggleDropdown = (e: React.MouseEvent, id: number) => {
         </button>
       </div>
 
-      <DataTable columns={columns} data={usuarios} searchKeys={['login', 'nome', 'email']} />
+      <DataTable
+        columns={columns}
+        data={usuarios}
+        searchKeys={["login", "nome", "email", "statusId", "perfilId"]}
+      />
 
       <FormModal
         isOpen={isModalOpen}
-        title={editingUsuario ? 'Editar Usuário' : 'Novo Usuário'}
+        title={editingUsuario ? "Editar Usuário" : "Novo Usuário"}
         onClose={closeModal}
         onSubmit={onSubmit}
       >
-        {actionError && <p className="text-red-600 mb-2">{actionError}</p>}
+        {/* {actionError && <p className="text-red-600 mb-2">{actionError}</p>} */}
 
-        <label className="block mb-2">Login
-          <input
-            type="text"
-            value={formLogin}
-            onChange={e => setFormLogin(e.target.value)}
-            required
-            className="mt-1 w-full border rounded px-3 py-2"
-          />
-        </label>
+        {!editingUsuario && (
+          <label className="block mb-2">
+            Login
+            <input
+              type="text"
+              value={formLogin}
+              onChange={(e) => setFormLogin(e.target.value)}
+              required
+              className="mt-1 w-full border rounded px-3 py-2"
+            />
+          </label>
+        )}
 
-        <label className="block mb-2">Nome
+        <label className="block mb-2">
+          Nome
           <input
             type="text"
             value={formNome}
-            onChange={e => setFormNome(e.target.value)}
-            required
-            className="mt-1 w-full border rounded px-3 py-2"
-          />
-        </label>
-
-        <label className="block mb-2">Email
-          <input
-            type="email"
-            value={formEmail}
-            onChange={e => setFormEmail(e.target.value)}
+            onChange={(e) => setFormNome(e.target.value)}
             required
             className="mt-1 w-full border rounded px-3 py-2"
           />
         </label>
 
         <label className="block mb-2">
-          Senha {editingUsuario && '(deixe vazio para não alterar)'}
+          Email
+          <input
+            type="email"
+            value={formEmail}
+            onChange={(e) => setFormEmail(e.target.value)}
+            required
+            className="mt-1 w-full border rounded px-3 py-2"
+          />
+        </label>
+
+        <label className="block mb-2">
+          Senha {editingUsuario && "(deixe vazio para não alterar)"}
           <div className="relative">
             <input
-              type={mostrarSenha ? 'text' : 'password'}
+              type={mostrarSenha ? "text" : "password"}
               value={formSenha}
               onChange={(e) => setFormSenha(e.target.value)}
               className="mt-1 w-full border rounded px-3 py-2 pr-10"
@@ -278,17 +265,18 @@ const handleToggleDropdown = (e: React.MouseEvent, id: number) => {
               type="button"
               onClick={() => setMostrarSenha(!mostrarSenha)}
               className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-gray-700"
-              aria-label={mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'}
+              aria-label={mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
             >
               {mostrarSenha ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
         </label>
 
-        <label className="block mb-2">Status
+        <label className="block mb-2">
+          Status
           <select
             value={formStatus}
-            onChange={e => setFormStatus(Number(e.target.value))}
+            onChange={(e) => setFormStatus(Number(e.target.value))}
             className="mt-1 w-full border rounded px-3 py-2"
           >
             <option value={1}>Ativo</option>
@@ -296,10 +284,11 @@ const handleToggleDropdown = (e: React.MouseEvent, id: number) => {
           </select>
         </label>
 
-        <label className="block mb-2">Perfil
+        <label className="block mb-2">
+          Perfil
           <select
             value={formPerfil}
-            onChange={e => setFormPerfil(Number(e.target.value))}
+            onChange={(e) => setFormPerfil(Number(e.target.value))}
             className="mt-1 w-full border rounded px-3 py-2"
           >
             <option value={1}>Administrador</option>
@@ -309,4 +298,4 @@ const handleToggleDropdown = (e: React.MouseEvent, id: number) => {
       </FormModal>
     </>
   );
-};
+}

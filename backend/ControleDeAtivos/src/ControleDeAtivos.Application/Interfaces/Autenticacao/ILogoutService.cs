@@ -9,6 +9,6 @@ namespace ControleDeAtivos.Application.Interfaces.Autenticacao
 {
     public interface ILogoutService
     {
-        Task ExecuteAsync(RequestRefreshTokenJson request);
+        Task ExecuteAsync(string request);
     }
 }
