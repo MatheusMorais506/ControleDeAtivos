@@ -1,8 +1,8 @@
-﻿using ControleDeAtivos.Application.Interfaces.Usuarios;
+﻿using ControleDeAtivos.Application.Interfaces.Criptografia;
+using ControleDeAtivos.Application.Interfaces.Usuarios;
 using ControleDeAtivos.Application.Requests.Usuario;
 using ControleDeAtivos.Application.Responses.Usuario;
 using ControleDeAtivos.Domain.Entities;
-using ControleDeAtivos.Domain.Enums;
 using ControleDeAtivos.Domain.Repositories;
 
 namespace ControleDeAtivos.Application.UseCases.Usuarios
@@ -10,8 +10,16 @@ namespace ControleDeAtivos.Application.UseCases.Usuarios
     public class CadastrarUsuarioservice : ICadastrarUsuarioService
     {
         private readonly IUsuarioRepository _repo;
+        private readonly ICryptoService _cryptoService;
 
-        public CadastrarUsuarioservice(IUsuarioRepository repo) => _repo = repo;
+        public CadastrarUsuarioservice(
+            IUsuarioRepository repo,
+            ICryptoService cryptoService
+            )
+        {
+            _repo = repo;
+            _cryptoService = cryptoService;
+        }
 
         public async Task<ResponseCadastrarUsuarioJson> ExecuteAsync(RequestCadastrarUsuarioJson dto)
         {
@@ -33,7 +41,9 @@ namespace ControleDeAtivos.Application.UseCases.Usuarios
                 dto.PerfilId
             );
 
-            usuario.DefinirSenha(dto.Senha);
+            var senhaDescriptografada = _cryptoService.Decrypt(dto.Senha);
+
+            usuario.DefinirSenha(senhaDescriptografada);
 
             await _repo.AdicionarAsync(usuario);
             await _repo.SalvarAsync();

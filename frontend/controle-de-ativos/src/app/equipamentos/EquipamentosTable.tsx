@@ -90,8 +90,10 @@ export function EquipamentosTable() {
       await ConsultarEquipamento();
       closeModal();
     } catch (err) {
-      setActionError((err as Error).message || "Erro desconhecido");
-      mensagemDeErro("Processo não realizado!");
+      setActionError((err as Error).message.toString() || "Erro desconhecido");
+      mensagemDeErro(
+        String((err as Error).message || "Processo não realizado!")
+      );
     }
   };
 
@@ -106,7 +108,12 @@ export function EquipamentosTable() {
         await ConsultarEquipamento();
         mensagemDeSucesso("Equipamento removido com sucesso!");
       } catch (err) {
-        mensagemDeErro((err as Error).message || "Erro ao remover equipamento");
+        setActionError(
+          (err as Error).message.toString() || "Erro desconhecido"
+        );
+        mensagemDeErro(
+          String((err as Error).message || "Processo não realizado!")
+        );
       }
     }
   };
@@ -124,7 +131,10 @@ export function EquipamentosTable() {
       setIsModalOpenEmprestimo(false);
       mensagemDeSucesso("Equipamento emprestado com sucesso!");
     } catch (err) {
-      mensagemDeErro((err as Error).message || "Erro ao emprestar equipamento");
+      setActionError((err as Error).message.toString() || "Erro desconhecido");
+      mensagemDeErro(
+        String((err as Error).message || "Processo não realizado!")
+      );
     }
   };
 
@@ -139,8 +149,11 @@ export function EquipamentosTable() {
         await ConsultarEquipamento();
         mensagemDeSucesso("Equipamento devolvido com sucesso!");
       } catch (err) {
+        setActionError(
+          (err as Error).message.toString() || "Erro desconhecido"
+        );
         mensagemDeErro(
-          (err as Error).message || "Erro ao devolver equipamento"
+          String((err as Error).message || "Processo não realizado!")
         );
       }
     }

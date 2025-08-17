@@ -21,7 +21,7 @@ export function useEquipamentosActions() {
       const data = await consultarEquipamento();
       setEquipamentos(data);
     } catch (err) {
-      setError((err as Error).message || 'Erro ao buscar equipamentos');
+      setError((err as Error).message);
     } finally {
       setIsLoading(false);
     }
@@ -34,7 +34,7 @@ export function useEquipamentosActions() {
       const newEquipamento = await registrarEquipamento(nome, codigoIdentificacao);
       setEquipamentos(prev => [...prev, newEquipamento]);
     } catch (err) {
-      setError((err as Error).message || 'Erro ao adicionar equipamento');
+      setError((err as Error).message);
       throw err;
     } finally {
       setIsLoading(false);
@@ -48,7 +48,7 @@ export function useEquipamentosActions() {
       const updated = await emprestarEquipamento(id, note);
       setEquipamentos(prev => prev.map(e => (e.id === id ? updated : e)));
     } catch (err) {
-      setError((err as Error).message || 'Erro ao Emprestar equipamento');
+      setError((err as Error).message);
       throw err;
     } finally {
       setIsLoading(false);
@@ -62,7 +62,7 @@ export function useEquipamentosActions() {
       const updated = await devolverEquipamento(id);
       setEquipamentos(prev => prev.map(e => (e.id === id ? updated : e)));
     } catch (err) {
-      setError((err as Error).message || 'Erro ao devolver equipamento');
+      setError((err as Error).message);
       throw err;
     } finally {
       setIsLoading(false);
@@ -76,7 +76,7 @@ export function useEquipamentosActions() {
       await deletarEquipamento(id);
       setEquipamentos(prev => prev.filter(e => e.id !== id));
     } catch (err) {
-      setError((err as Error).message || 'Erro ao remover equipamento');
+      setError((err as Error).message);
       throw err;
     } finally {
       setIsLoading(false);
@@ -91,7 +91,7 @@ export function useEquipamentosActions() {
       const updated = await atualizarEquipamento(id, nome, codigoIdentificacao, notaEmprestimo);
       setEquipamentos(prev => prev.map(e => (e.id === id ? updated : e)));
     } catch (err) {
-      setError((err as Error).message || 'Erro ao EmprestarEquipamento equipamento');
+      setError((err as Error).message);
       throw err;
     } finally {
       setIsLoading(false);
@@ -100,10 +100,10 @@ export function useEquipamentosActions() {
 
   return {
     ConsultarEquipamento,
-    AdicionarEquipamento, 
+    AdicionarEquipamento,
     EmprestarEquipamento,
-    DevolverEquipamento, 
-    RemoveEquipamento, 
+    DevolverEquipamento,
+    RemoveEquipamento,
     AtualizarEquipamento
   };
 }

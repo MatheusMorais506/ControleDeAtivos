@@ -5,6 +5,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { mensagemDeErro } from "@/lib/toastLib";
 import { Loading } from "@/components/common/Loading";
 import Image from "next/image";
+import { encryptPassword } from "@/utils/crypto";
 
 export function Login() {
   const { AutenticarUsuario } = useAuth();
@@ -26,9 +27,12 @@ export function Login() {
     setLoading(true);
 
     try {
-      await AutenticarUsuario({ login, senha });
+      var senhaCriptografia = encryptPassword(senha);
+
+      await AutenticarUsuario({ login, senha: senhaCriptografia });
     } catch (erro: unknown) {
-      const erroOcorrido = erro instanceof Error ? erro.message : "Erro ao autenticar usuário";
+      const erroOcorrido =
+        erro instanceof Error ? erro.message : "Erro ao autenticar usuário";
       setErro(erroOcorrido);
       mensagemDeErro(erroOcorrido);
     } finally {

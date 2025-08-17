@@ -1,4 +1,5 @@
 ﻿using ControleDeAtivos.Application.Interfaces.Autenticacao;
+using ControleDeAtivos.Application.Interfaces.Criptografia;
 using ControleDeAtivos.Application.Interfaces.Token;
 using ControleDeAtivos.Application.Requests.Login;
 using ControleDeAtivos.Application.Responses.Login;
@@ -13,11 +14,16 @@ namespace ControleDeAtivos.Application.UseCases.Autenticacao
     {
         private readonly IAutenticacaoRepository _autenticacaoRepo;
         private readonly ITokenService _tokenService;
+        private readonly ICryptoService _cryptoService;
 
-        public Loginservice(IAutenticacaoRepository autenticacaoRepo, ITokenService tokenService)
+        public Loginservice(
+            IAutenticacaoRepository autenticacaoRepo, 
+            ITokenService tokenService,
+            ICryptoService cryptoService)
         {
             _autenticacaoRepo = autenticacaoRepo;
             _tokenService = tokenService;
+            _cryptoService = cryptoService;
         }
 
         public async Task<ResponseLoginJson> ExecuteAsync(RequestLoginJson request)
@@ -30,7 +36,9 @@ namespace ControleDeAtivos.Application.UseCases.Autenticacao
             var usuario = await _autenticacaoRepo.ValidarCredenciaisAsync(request.Login, statusInativo)
                 ?? throw new UnauthorizedAccessException("Usuário inválido");
 
-            bool senhaValida = BCrypt.Net.BCrypt.Verify(request.Senha, usuario.Senha);
+            var senhaDescriptografada = _cryptoService.Decrypt(request.Senha);
+
+            bool senhaValida = BCrypt.Net.BCrypt.Verify(senhaDescriptografada, usuario.Senha);
             if (!senhaValida)
                 throw new UnauthorizedAccessException("Credenciais inválidas");
 

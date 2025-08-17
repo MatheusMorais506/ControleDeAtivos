@@ -1,5 +1,6 @@
 ﻿using ControleDeAtivos.API.Mappers;
 using ControleDeAtivos.API.Models;
+using ControleDeAtivos.Domain.Exceptions;
 using System.Text.Json;
 
 namespace ControleDeAtivos.API.Middlewares
@@ -7,10 +8,12 @@ namespace ControleDeAtivos.API.Middlewares
     public class ErrorHandlingMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly ILogger<ErrorHandlingMiddleware> _logger;
 
-        public ErrorHandlingMiddleware(RequestDelegate next)
+        public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
         {
             _next = next;
+            _logger = logger;
         }
 
         public async Task Invoke(HttpContext context)
@@ -21,7 +24,21 @@ namespace ControleDeAtivos.API.Middlewares
             }
             catch (Exception ex)
             {
+                switch (ex)
+                {
+                    case DomainException:
+                        _logger.LogWarning(ex, "Erro na requisição {Path}", context.Request.Path);
+                        break;
+                    case UnauthorizedAccessException:
+                        _logger.LogWarning(ex, "Acesso não autorizado na requisição {Path}", context.Request.Path);
+                        break;
+                    default:
+                        _logger.LogError(ex, "Erro inesperado na requisição {Path}", context.Request.Path);
+                        break;
+                }
+
                 var statusCode = ExceptionStatusCodeMapper.GetStatusCode(ex);
+
                 var errorResponse = ErrorResponse.FromException(
                     ex,
                     statusCode,
@@ -43,3 +60,4 @@ namespace ControleDeAtivos.API.Middlewares
         }
     }
 }
+

@@ -1,33 +1,34 @@
 ﻿using ControleDeAtivos.Api.Requests.Usuario;
-using ControleDeAtivos.Application.Interfaces;
-using ControleDeAtivos.Application.Interfaces.Equipamentos;
+using ControleDeAtivos.Application.Interfaces.Criptografia;
 using ControleDeAtivos.Application.Interfaces.Usuarios;
-using ControleDeAtivos.Domain.Exceptions;
 using ControleDeAtivos.Domain.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ControleDeAtivos.Application.UseCases.Usuarios
 {
     public class AtualizarUsuarioservice : IAtualizarUsuarioService
     {
         private readonly IUsuarioRepository _repo;
+        private readonly ICryptoService _cryptoService;
 
         public AtualizarUsuarioservice(
-            IUsuarioRepository repo) => _repo = repo;
+            IUsuarioRepository repo, 
+            ICryptoService cryptoService)
+        {
+            _repo = repo;
+            _cryptoService = cryptoService;
+        }
 
         public async Task Execute(RequestAtualizarUsuarioJson request)
         {
             var usuario = await _repo.ObterPorIdAsync(request.Id)
                 ?? throw new KeyNotFoundException("Usuário não encontrado");
 
+            var senhaDescriptografada = _cryptoService.Decrypt(request.Senha);
+
             usuario.Atualizar(
                 request.Nome,
                 request.Email,
-                request.Senha,
+                senhaDescriptografada,
                 request.StatusId,
                 request.PerfilId
             );

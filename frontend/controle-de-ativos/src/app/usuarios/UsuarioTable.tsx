@@ -13,6 +13,7 @@ import { UsuarioStatus } from "@/types/UsuarioStatus";
 import { UsuarioPerfil } from "@/types/UsuarioPerfil";
 import { usePopupConfirmacaoActions } from "@/hooks/usePopupConfirmacaoActions";
 import { DropdownActions } from "@/components/common/DropdownActions";
+import { encryptPassword } from "@/utils/crypto";
 
 export function UsuarioTable() {
   const { usuarios } = useUsuariosContext();
@@ -82,11 +83,13 @@ export function UsuarioTable() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    var senhaCriptografia = encryptPassword(formSenha);
+
     const errors = validateUsuarioForm({
       login: formLogin,
       nome: formNome,
       email: formEmail,
-      senha: formSenha,
+      senha: senhaCriptografia,
       editingUsuario: !!editingUsuario,
     });
 
@@ -99,7 +102,7 @@ export function UsuarioTable() {
       login: formLogin.trim(),
       nome: formNome.trim(),
       email: formEmail.trim(),
-      senha: formSenha,
+      senha: senhaCriptografia,
       statusId: formStatus.toString(),
       perfilId: formPerfil.toString(),
     };
